@@ -4,7 +4,7 @@ services:
     container_name: postgres-auth
     environment:
       POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: 1234
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: auth
     ports:
       - "5432:5432"
