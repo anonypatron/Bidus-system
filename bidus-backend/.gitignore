@@ -1,0 +1,72 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# 빌드 도구 (Build Tools)
+# Maven
+/target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+
+# Gradle
+/.gradle/
+/build/
+/bin/
+/out/
+gradle-app.setting
+
+# 빌드 산출물 (Artifacts)
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+
+# 로그 파일 (Logs)
+*.log
+logs/
+
+# 환경 변수 및 민감 정보 (Secrets)
+# application.yml(properties)은 기본 설정을 커밋하되,
+# 로컬 개발용, 운영용 민감 파일은 무시합니다.
+application-local.yml
+application-dev.yml
+application-prod.yml
+application-local.properties
+application-dev.properties
+application-prod.properties
+*-secret.yml
+*-secret.properties
+.env
+
+# Docker 로컬 오버라이드
+docker-compose.override.yml
+
+# Nginx SSL/TLS 인증서 (절대 커밋 금지)
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
+nginx/ssl/
+
+# Nginx 로컬 로그 (볼륨 매핑 시)
+nginx/logs/
+
+# Java / Spring 임시 파일
+.project
+.settings/
+.classpath
+images/
+csv/
+test/
+
+# HSQLDB (로컬 DB 테스트 시)
+*.script
+*.properties
+*.lck

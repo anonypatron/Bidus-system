@@ -1,0 +1,21 @@
+server:
+  port: 8087
+
+spring:
+  application:
+    name: search-service
+  config:
+    import:
+      - classpath:cloud.yml
+      - classpath:kafka.yml
+      - classpath:elasticsearch.yml
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  level:
+    root: debug

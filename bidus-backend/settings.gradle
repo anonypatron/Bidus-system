@@ -1,0 +1,12 @@
+rootProject.name = 'auction'
+
+include 'common-dto'
+include 'api-gateway'
+include 'auth-service'
+include 'auction-service'
+include 'bidding-service'
+include 'bid-request-service'
+include 'notification-service'
+include 'analysis-service'
+include 'data-generator'
+include 'search-service'

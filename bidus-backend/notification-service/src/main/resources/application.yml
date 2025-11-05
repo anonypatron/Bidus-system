@@ -1,0 +1,18 @@
+server:
+  port: 8084
+  tomcat:
+    connection-timeout: -1
+
+spring:
+  application:
+    name: notification-service
+  config:
+    import:
+      - classpath:kafka.yml
+      - classpath:cloud.yml
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
