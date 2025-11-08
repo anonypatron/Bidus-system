@@ -14,7 +14,7 @@ public class SecurityConfig {
 
     private final String[] PERMIT_ALL_URLS = {
             "/actuator/**",
-            "/api/search/auctions**",
+            "/api/search/**",
     };
 
     @Bean

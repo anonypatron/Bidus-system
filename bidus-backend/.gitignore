@@ -70,3 +70,6 @@ test/
 *.script
 *.properties
 *.lck
+
+dummy.png
+jmeter_users.csv

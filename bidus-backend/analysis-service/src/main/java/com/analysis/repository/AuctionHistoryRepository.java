@@ -17,4 +17,5 @@ public interface AuctionHistoryRepository extends JpaRepository<AuctionHistory, 
     List<AuctionHistory> findEndedAuctionsWithoutGraphData(@Param("now") Instant now);
     Optional<AuctionHistory> findByAuctionId(Long auctionId);
     List<AuctionHistory> findByAuctionIdIn(List<Long> auctionIds);
+    void deleteByAuctionId(Long auctionId);
 }

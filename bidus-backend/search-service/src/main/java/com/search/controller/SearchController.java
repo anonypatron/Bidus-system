@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/search")
@@ -24,11 +26,11 @@ public class SearchController {
     public ResponseEntity<Page<AuctionSearchDocument>> searchAuctions(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String status,
-            @RequestParam(required = false) String category,
-            @PageableDefault(page = 0, size = 10) Pageable pageable
+            @RequestParam(required = false) List<String> categories,
+            @PageableDefault(page = 0, size = 9) Pageable pageable
     ) {
         Page<AuctionSearchDocument> result = searchService.search(
-                keyword, status, category, pageable
+                keyword, status, categories, pageable
         );
 
         return ResponseEntity.status(HttpStatus.OK).body(result);

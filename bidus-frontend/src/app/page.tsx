@@ -6,6 +6,8 @@ import { formatDateTime } from './utils/formatDataTime';
 import { Auction, PageInfo } from "../../types/dto/response/auction";
 import axiosInstance from './utils/axiosInstance';
 import { UserContext } from "./context/UserProvider";
+import LoadingSpinner from "./components/LoadingSpinner";
+import EmptyComponent from "./components/EmptyComponent";
 
 function Home() {
     const router = useRouter();
@@ -26,8 +28,8 @@ function Home() {
                 setAuctions(res.data.content);
                 setPageInfo({
                     page: res.data.number,
-                    totalPages: res.data.totalPage,
-                    totalElements: res.data.totalElement,
+                    totalPages: res.data.totalPages,
+                    totalElements: res.data.totalElements,
                 });
             } catch (err: any) {
                 console.error(err);
@@ -103,16 +105,16 @@ function Home() {
     };
 
     if (isLoading) {
-        return (
-            <div className="loading-container">
-                <h2 className="loading-text">로딩 중...</h2>
-            </div>
-        )
+        return <LoadingSpinner/>
+    }
+
+    if (!auctions || auctions.length === 0) {
+        return <EmptyComponent content="진행중인 경매가 없습니다."/>
     }
 
     return (
         <div className="main-container">
-            <h2>최신 경매 목록</h2>
+            <h2>진행중인 경매 목록</h2>
             <hr/>
             <br/>
             <div className="auction-list">

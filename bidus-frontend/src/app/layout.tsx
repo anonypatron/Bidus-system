@@ -4,7 +4,7 @@ import Providers from './providers';
 import LayoutWrapper from './components/LayoutWrapper';
 
 export const metadata: Metadata = {
-  title: "Online Auction",
+  title: "Bidus",
   description: "다양한 물건을 실시간으로 거래합니다.",
 };
 
@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
       <body>
         <Providers>
           <LayoutWrapper>

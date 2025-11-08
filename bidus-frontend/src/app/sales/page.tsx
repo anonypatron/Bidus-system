@@ -146,7 +146,6 @@ function SalesPage() {
                                 <img src={imagePreview} alt="미리보기" className="image-preview" />
                             ) : (
                                 <>
-                                    {/* 아이콘을 추가하여 시각적 효과를 높일 수 있습니다 (선택사항) */}
                                     <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" viewBox="0 0 16 16" style={{ color: '#cbd5e1' }}>
                                         <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
                                         <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/>
@@ -157,7 +156,6 @@ function SalesPage() {
                         </label>
                     </div>
                 </div>
-                {/* 제목, 설명, 시작 가격 등 다른 필드는 동일 */}
                 <div className="form-group">
                    <label className="form-label" htmlFor="title">* 제목</label>
                    <input
@@ -207,7 +205,6 @@ function SalesPage() {
                     />
                 </div>
                 
-                {/* DatePicker 부분은 동일 */}
                 <div className="form-group">
                     <label className="form-label">* 경매 시작 시간(15분 간격)</label>
                     <DatePicker
@@ -216,7 +213,7 @@ function SalesPage() {
                         showTimeSelect
                         dateFormat="yyyy년 MM월 dd일 HH:mm"
                         timeFormat="HH:mm"
-                        timeIntervals={15}
+                        timeIntervals={1}
                         className="form-input"
                         minDate={minDate}
                         placeholderText="경매 시작 시간을 선택하세요"
@@ -232,7 +229,7 @@ function SalesPage() {
                         showTimeSelect
                         dateFormat="yyyy년 MM월 dd일 HH:mm"
                         timeFormat="HH:mm"
-                        timeIntervals={15}
+                        timeIntervals={1}
                         className="form-input"
                         minDate={selectedStartTime || minDate}
                         placeholderText="경매 종료 시간을 선택하세요"

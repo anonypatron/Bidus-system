@@ -3,11 +3,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";
-import { UserContext } from "../context/UserProvider";
-import { NavbarProps } from '../../../types/others/navbar';
 import { RiAuctionFill } from "react-icons/ri";
+import { NavbarProps } from '../../../types/others/navbar';
+import { UserContext } from "../context/UserProvider";
 import SearchBox from './SearchBox';
-import { IoIosNotificationsOutline } from "react-icons/io";
 
 function Navbar({ onToggleSidebar }: NavbarProps) {
     
@@ -46,7 +45,7 @@ function Navbar({ onToggleSidebar }: NavbarProps) {
                 <div className="navbar-left">
                     <RiAuctionFill/>
                     <Link href="/" className="navbar-link navbar-brand">
-                        Online Auction
+                        Bidus
                     </Link>
                     {(userInfo.role === 'ADMIN') && (
                     <Link href="/admin" className="navbar-link">
@@ -61,7 +60,6 @@ function Navbar({ onToggleSidebar }: NavbarProps) {
 
                 <div className="navbar-right">
                     <span className="navbar-text">안녕하세요, {userInfo.username} 님!</span>
-                    <IoIosNotificationsOutline/>
                     <button onClick={handleLogout} className="navbar-button logout-button">
                         로그아웃
                     </button>

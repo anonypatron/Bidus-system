@@ -124,7 +124,7 @@ function SettingPage() {
                             {error}
                         </div>
                     }
-                    <div className="form-actions">
+                    <div className="form-group">
                         <button type="submit" className="signup-button">수정 완료</button>
                     </div>
                 </form>

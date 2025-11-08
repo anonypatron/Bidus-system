@@ -1,10 +1,7 @@
 package com.search.entity;
 
 import com.common.AuctionStatus;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -15,6 +12,7 @@ import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Setter
 @Document(indexName = "auctions_v1")
 public class AuctionSearchDocument {
 
@@ -30,7 +28,7 @@ public class AuctionSearchDocument {
     @Field(type = FieldType.Keyword, index = false)
     private String imagePath;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Keyword)
     private String sellerUserName;
 
     @Field(type = FieldType.Keyword)

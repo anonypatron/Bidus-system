@@ -14,19 +14,21 @@ import java.util.stream.Collectors;
 public class AuctionResponseDto {
 
     private Long id;
-    private Long sellerId;
-    private String sellerUserName;
-    private String imagePath;
     private String title;
     private String description;
-    private List<String> categories;
+    private String imagePath;
+    private String sellerUserName;
+    private Long sellerId;
+
+    private AuctionStatus status;
+
     private Long startPrice;
     private Long currentPrice;
 
     private Instant startTime;
     private Instant endTime;
 
-    private AuctionStatus status;
+    private List<String> categories;
 
     private Long winnerId; // 낙찰자 id
     private Long finalPrice; // 낙찰가

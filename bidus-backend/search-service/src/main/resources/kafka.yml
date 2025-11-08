@@ -8,3 +8,5 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: "*"
+    properties:
+      metadata.max.age.ms: 180000

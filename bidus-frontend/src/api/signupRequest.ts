@@ -3,7 +3,7 @@ import { SignupFormData } from "../../types/dto/request/login";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const signupRequest = async (formData: SignupFormData) => {
-    const res = await fetch(`${API_BASE_URL}` + '/api/auth/signup', {
+    const res = await fetch(`${API_BASE_URL}` + '/auth/signup', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

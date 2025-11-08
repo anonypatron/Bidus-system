@@ -6,6 +6,7 @@ import { BidForm } from '../../../types/dto/request/auction';
 import { Auction, AuctionStatus } from '../../../types/dto/response/auction';
 import axiosInstance from '../utils/axiosInstance';
 import { formatDateTime } from '../utils/formatDataTime';
+import { toast } from '../../lib/toast';
 
 function AuctionsPage() {
     const searchParams = useSearchParams();
@@ -21,7 +22,6 @@ function AuctionsPage() {
     });
     const [auctionDetail, setAuctionDetail] = useState<Auction>({
         id: 0,
-        sellerId: 0,
         sellerUserName: '',
         imagePath: '',
         title: '',
@@ -32,8 +32,6 @@ function AuctionsPage() {
         startTime: '',
         endTime: '',
         status: AuctionStatus.IN_PROGRESS,
-        winnerId: null,
-        finalPrice: null,
         isBookmarked: false,
     });
     
@@ -42,7 +40,6 @@ function AuctionsPage() {
         const fetchAuction = async () => {
             try {
                 const res = await axiosInstance.get(`/auctions/${auctionId}`);
-                // console.log(res);
                 setAuctionDetail(res.data);
             } catch(err: any) {
                 console.log(err);
@@ -63,12 +60,12 @@ function AuctionsPage() {
             }));
             setError('');
 
-            alert(`${priceData.price}원 입찰을 성공했습니다.`);
+            toast.success(`${priceData.price}원 입찰을 성공했습니다.`);
         });
 
         // 입찰 실패
         eventSource.addEventListener('bid-failed', (event) => {
-            setError(event.data);
+            toast.error(event.data);
         });
 
         // 에러 났을 때 sse닫기
@@ -84,6 +81,7 @@ function AuctionsPage() {
 
     const handleChangeBidPrice = (price: number) => {
         const newBidPrice = myBidAmount + price;
+        
         if (newBidPrice <= 0) {
             return;
         }

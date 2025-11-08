@@ -74,8 +74,9 @@ public class AuctionService {
         String imagePath = imageService.saveImagePath(image, savedAuction.getId());
         savedAuction.setImagePath(imagePath);
         auctionRepository.save(savedAuction);
-        eventPublishService.publishAuctionSyncEvent(savedAuction, dto.getCategories());
 
+        // 저장 후 kafka에 메시지 발행
+        eventPublishService.publishAuctionCreatedEvent(savedAuction);
         return AuctionResponseDto.fromEntity(savedAuction, false);
     }
 
@@ -99,7 +100,6 @@ public class AuctionService {
         return AuctionResponseDto.fromEntity(auction, isBookmarked);
     }
 
-    @Deprecated
     @Transactional(readOnly = true)
     public Page<AuctionResponseDto> getAuctions(
             Long userId,
@@ -115,7 +115,6 @@ public class AuctionService {
         }
         Page<Auction> auctionPages = auctionRepository.findAllByStatusWithCategories(PageRequest.of(page, size, sort), status);
 
-        // Todo : bookmark된 옥션 가져오기
         List<Long> auctionIds = auctionPages.stream()
                 .map(Auction::getId)
                 .collect(Collectors.toList());

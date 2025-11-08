@@ -1,10 +1,20 @@
 import { fetchAllInprogressAuctions, fetchAuctionHistory, deleteAuction } from "@/api/auctions"
 import { useQueries, useQuery } from "@tanstack/react-query"
+import { fetchSearchByKeyword } from '../api/search';
+import { SearchParams } from '../../types/dto/request/search';
 
 export const useAuctionQuery = (currentPage: number) => {
     return useQuery({
         queryKey: ['auctions', currentPage],
         queryFn: () => fetchAllInprogressAuctions(currentPage),
+        staleTime: 1000 * 60 * 5,
+    });
+};
+
+export const useAuctionSearch = (params: SearchParams) => {
+    return useQuery({
+        queryKey: ['params', params],
+        queryFn: () => fetchSearchByKeyword(params),
         staleTime: 1000 * 60 * 5,
     });
 };

@@ -40,26 +40,37 @@ function Sidebar({ isOpen }: SidebarProps) {
     ];
     const pathname = usePathname();
     const sidebarClassName = `sidebar ${isOpen ? '' : 'collapsed'}`;
+    const bottomItemHrefs = ['/customer-service-center'];
+
+    const mainMenuItems = menuItems.filter(
+        (item) => !bottomItemHrefs.includes(item.href)
+    );
+
+    const bottomMenuItems = menuItems.filter((item) =>
+        bottomItemHrefs.includes(item.href)
+    );
+
+    const renderMenuItems = (items: typeof menuItems) => {
+        return items.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href;
+
+            return (
+                <li key={item.href} className={isActive ? 'active' : ''}>
+                    <Link href={item.href}>
+                        <Icon className="menu-icon" />
+                        {item.label}
+                    </Link>
+                </li>
+            );
+        });
+    };
 
     return (
         <aside className={sidebarClassName}>
-            <nav>
-                <ul className="sidebar-menu">
-                {menuItems.map((item) => {
-                    const Icon = item.icon;
-                    const isActive = pathname === item.href;
-
-                    return (
-                        <li key={item.href} className={isActive ? 'active' : ''}>
-                            <Link href={item.href}>
-                            <Icon className="menu-icon" />
-                                {item.label}
-                            </Link>
-                        </li>
-                    );
-                    
-                })}
-                </ul>
+            <nav className='sidebar-nav'>
+                <ul className="sidebar-menu">{renderMenuItems(mainMenuItems)}</ul>
+                <ul className="sidebar-menu sidebar-menu-bottom">{renderMenuItems(bottomMenuItems)}</ul>
             </nav>
         </aside>
     );

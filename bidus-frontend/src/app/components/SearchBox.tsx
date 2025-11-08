@@ -3,35 +3,38 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { LuSearch } from 'react-icons/lu';
+import { SearchModal } from '../components/modal/SearchModal';
 
 function SearchBox() {
     const [searchTerm, setSearchTerm] = useState('');
-    const router = useRouter();
+    const [isModalOpen, setIsModalOpen] = useState(false); // (2. 모달 상태)
 
-    const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleOpenModal = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
-        const trimmedSearchString = searchTerm.trim();
-        if (!trimmedSearchString) {
-            return;
-        }
-
-        router.push(`/search?q=${trimmedSearchString}`);
+        setIsModalOpen(true); // (3. 폼 제출 시 모달 열기)
     };
 
     return (
-        <form className="search-box-form" onSubmit={handleSearch}>
-        <input
-            type="text"
-            className="search-input"
-            placeholder="상품을 검색..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <button type="submit" className="search-button">
-            <LuSearch />
-        </button>
-        </form>
+        <>
+            <form className="search-box-form" onSubmit={handleOpenModal}>
+                <input
+                    type="text"
+                    className="search-input"
+                    placeholder="상세 검색..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <button type="submit" className="search-button">
+                    <LuSearch />
+                </button>
+            </form>
+
+            <SearchModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                initialKeyword={searchTerm.trim()}
+            />
+        </>
     );
 }
 

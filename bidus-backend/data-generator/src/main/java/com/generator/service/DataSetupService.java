@@ -122,7 +122,7 @@ public class DataSetupService implements CommandLineRunner {
                         List.of(CATEGORIES.get(random.nextInt(CATEGORIES.size()))), // 카테고리 1개 랜덤 선택
                         10000L + (random.nextInt(100) * 100), // 10,000 ~ 19,900원
                         Instant.now().plus(1, ChronoUnit.MINUTES), // n분 뒤 시작
-                        Instant.now().plus(3, ChronoUnit.MINUTES)     // n분 뒤 마감
+                        Instant.now().plus(7, ChronoUnit.DAYS)     // n분 뒤 마감
                 );
 
                 // 3. Multipart/form-data 요청 구성

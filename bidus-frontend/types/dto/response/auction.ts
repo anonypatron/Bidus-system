@@ -4,18 +4,18 @@ export enum AuctionStatus {
 
 export interface Auction {
     id: number;
-    sellerId: number;
-    sellerUserName: string;
-    imagePath: string;
     title: string;
     description: string;
-    categories: Array<string>;
+    imagePath: string;
+    // sellerId: number;
+    sellerUserName: string;
+    status: AuctionStatus;
     startPrice: number;
     currentPrice: number;
     startTime: string;
     endTime: string;
-    status?: AuctionStatus | null;
-    winnerId?: number | null;
+    categories: Array<string>;
+    // winnerId?: number | null;
     finalPrice?: number | null;
     isBookmarked: boolean;
 }

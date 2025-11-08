@@ -60,7 +60,7 @@ function LoginPage() {
                     {clientError && <div className="error-message">{clientError}</div>}
                     {isError && <div className="error-message">{(error).message}</div>}
 
-                    <button type="submit" className="login-button">
+                    <button type="submit" className="signup-button">
                         {isPending ? '로그인 중...' : '로그인'}
                     </button>
                 </form>

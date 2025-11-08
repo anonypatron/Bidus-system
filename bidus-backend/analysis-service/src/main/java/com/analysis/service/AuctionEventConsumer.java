@@ -2,9 +2,7 @@ package com.analysis.service;
 
 import com.analysis.entity.AuctionHistory;
 import com.analysis.repository.AuctionHistoryRepository;
-import com.common.dto.auction.AuctionClosedEvent;
-import com.common.dto.auction.AuctionStartedEvent;
-import com.common.dto.auction.AuctionSyncEvent;
+import com.common.dto.auction.*;
 import com.common.error.code.ErrorCode;
 import com.common.exception.auction.AuctionNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -20,21 +18,8 @@ public class AuctionEventConsumer {
 
     private final AuctionHistoryRepository auctionHistoryRepository;
 
-    @Transactional
-    @KafkaListener(topics = "auction-sync-topic", groupId = "analysis-group")
-    public void handleAuctionSyncEvent(AuctionSyncEvent event) {
-        log.info("{} 메시지 수신", "auction-sync-topic");
-
-        AuctionHistory history = auctionHistoryRepository.findByAuctionId(event.getId())
-                .orElseThrow(() -> new AuctionNotFoundException(ErrorCode.AUCTION_NOT_FOUND));
-        history.setTitle(event.getTitle());
-        history.setStatus(event.getStatus());
-        history.setStartTime(event.getStartTime());
-        history.setEndTime(event.getEndTime());
-    }
-
-    @KafkaListener(topics = "auction-started-topic", groupId = "analysis-group")
-    public void handleAuctionStarted(AuctionStartedEvent event) {
+    @KafkaListener(topics = "auction-create-topic", groupId = "analysis-group")
+    public void handleAuctionCreatedEvent(AuctionCreatedEvent event) {
         log.info("{} 메시지 수신", "auction-started-topic");
 
         AuctionHistory auctionHistory = AuctionHistory.builder()
@@ -49,8 +34,36 @@ public class AuctionEventConsumer {
     }
 
     @Transactional
-    @KafkaListener(topics = "auction-closed-topic", groupId = "analysis-group")
-    public void handleAuctionClosed(AuctionClosedEvent event) {
+    @KafkaListener(topics = "auction-sync-topic", groupId = "analysis-group")
+    public void handleAuctionSyncEvent(AuctionSyncEvent event) {
+        log.info("{} 메시지 수신", "auction-sync-topic");
+
+        AuctionHistory history = auctionHistoryRepository.findByAuctionId(event.getId())
+                .orElseThrow(() -> new AuctionNotFoundException(ErrorCode.AUCTION_NOT_FOUND));
+        history.setTitle(event.getTitle());
+        history.setStatus(event.getStatus());
+        history.setStartTime(event.getStartTime());
+        history.setEndTime(event.getEndTime());
+    }
+
+    @Transactional
+    @KafkaListener(topics = "auction-delete-topic", groupId = "analysis-group")
+    public void handleAuctionDeletedEvent(AuctionDeletedEvent event) {
+        log.info("ID : {}번 경매 제거", event.getAuctionId());
+        auctionHistoryRepository.deleteByAuctionId(event.getAuctionId());
+    }
+
+    @Transactional
+    @KafkaListener(topics = "auction-start-topic", groupId = "analysis-group")
+    public void handleAuctionStartedEvent(AuctionStartedEvent event) {
+        AuctionHistory auction = auctionHistoryRepository.findByAuctionId(event.getAuctionId())
+                .orElseThrow(() -> new AuctionNotFoundException(ErrorCode.AUCTION_NOT_FOUND));
+        auction.setStatus(event.getStatus());
+    }
+
+    @Transactional
+    @KafkaListener(topics = "auction-close-topic", groupId = "analysis-group")
+    public void handleAuctionClosedEvent(AuctionClosedEvent event) {
         log.info("{}번 가격 : {}, 상태 : {} 수신", event.getAuctionId(), event.getFinalPrice(), event.getStatus());
 
         AuctionHistory auctionHistory = auctionHistoryRepository.findByAuctionId(event.getAuctionId())
@@ -58,6 +71,14 @@ public class AuctionEventConsumer {
         auctionHistory.setStatus(event.getStatus());
         auctionHistory.setFinalPrice(event.getFinalPrice());
         auctionHistoryRepository.save(auctionHistory);
+    }
+
+    @Transactional
+    @KafkaListener(topics = "auction-cancel-topic", groupId = "analysis-group")
+    public void handleAuctionCanceledEvent(AuctionCanceledEvent event) {
+        AuctionHistory auction = auctionHistoryRepository.findByAuctionId(event.getAuctionId())
+                .orElseThrow(() -> new AuctionNotFoundException(ErrorCode.AUCTION_NOT_FOUND));
+        auction.setStatus(event.getStatus());
     }
 
 }
