@@ -1,9 +1,11 @@
 package com.auction.repository;
 
+import com.auction.dto.response.CategoryStatsDto;
 import com.auction.entity.Auction;
 import com.common.AuctionStatus;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -14,13 +16,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.time.Instant;
-import java.util.HashSet;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static com.auction.entity.QAuction.auction;
-import static com.auction.entity.QAuctionBookmark.auctionBookmark;
 import static com.auction.entity.QAuctionCategory.auctionCategory;
 import static com.auction.entity.QCategory.category;
 
@@ -99,9 +101,9 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom {
             Long id,
             AuctionStatus status
     ) {
-        return queryFactory.select(auction)
+        return queryFactory
+                .selectFrom(auction)
                 .distinct()
-                .from(auction)
                 .leftJoin(auction.auctionCategories, auctionCategory).fetchJoin()
                 .where(
                         auction.winnerId.eq(id),
@@ -126,6 +128,19 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    public List<Auction> findCurrentBiddingByUserId(Long id) {
+        return queryFactory
+                .selectFrom(auction)
+                .distinct()
+                .leftJoin(auction.auctionCategories, auctionCategory).fetchJoin()
+                .where(
+                        auction.highestBidderId.eq(id),
+                        auction.status.eq(AuctionStatus.IN_PROGRESS)
+                )
+                .fetch();
+    }
+
     // 단일 행으로 단정하면 예외발생 가능성 있음(여러개의 행이 반환될 수 있음)
     // 따라서 리스트형태로 받으면 jpa가 내부적으로 엔티티 중복을 제거함.
     // fetch + distinct 사용
@@ -142,70 +157,88 @@ public class AuctionRepositoryImpl implements AuctionRepositoryCustom {
     }
 
     @Override
-    public Set<Long> findAuctionIdsByUserId(Long userId) {
-        List<Long> ids = queryFactory
-                .select(auctionBookmark.auction.id)
-                .from(auctionBookmark)
-                .where(auctionBookmark.user.id.eq(userId))
-                .fetch();
+    public Long findSellCountThisMonth(Long id) {
+        Instant thisMonthStart = getStartOfThisMonth();
+        Instant nextMonthStart = getStartOfNextMonth();
 
-        return new HashSet<>(ids);
-    }
-
-    @Override
-    public Set<Long> findBookmarkedAuctionIdsByUserIdAndAuctionIds(
-            Long userId,
-            List<Long> auctionIds
-    ) {
-        List<Long> ids = queryFactory
-                .select(auctionBookmark.auction.id)
-                .from(auctionBookmark)
-                .where(
-                        auctionBookmark.user.id.eq(userId),
-                        auctionBookmark.auction.id.in(auctionIds)
-                )
-                .fetch();
-
-        return new HashSet<>(ids);
-    }
-
-    @Override
-    public Page<Auction> findBookmarkedAuctionsByUserIdAndStatus(
-            Long userId,
-            AuctionStatus status,
-            Pageable pageable
-    ) {
-        JPAQuery<Auction> contentQuery = queryFactory
-                .select(auction)
+        return queryFactory
+                .select(auction.id.count())
                 .from(auction)
-                .join(auction.auctionBookmarks, auctionBookmark)
                 .where(
-                        auctionBookmark.user.id.eq(userId),
-                        auction.status.eq(status)
+                        auction.sellerId.eq(id),
+                        auction.status.eq(AuctionStatus.CLOSED),
+                        auction.winnerId.isNotNull(),
+                        auction.endTime.goe(thisMonthStart), // >= 이번달 1일
+                        auction.endTime.lt(nextMonthStart) // < 다음달 1일
                 )
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize());
+                .fetchOne();
+    }
 
-        for (Sort.Order order : pageable.getSort()) {
-            PathBuilder<Auction> pathBuilder = new PathBuilder<>(auction.getType(), auction.getMetadata());
-            contentQuery.orderBy(new OrderSpecifier<>(
-                    order.isAscending() ? Order.ASC : Order.DESC,
-                    pathBuilder.get(order.getProperty(), Comparable.class)
-            ));
-        }
+    @Override
+    public Long findWinCountThisMonth(Long id) {
+        Instant thisMonthStart = getStartOfThisMonth();
+        Instant nextMonthStart = getStartOfNextMonth();
 
-        List<Auction> content = contentQuery.fetch();
-
-        JPAQuery<Long> countQuery = queryFactory
-                .select(auctionBookmark.count())
-                .from(auctionBookmark)
-                .join(auctionBookmark.auction, auction)
+        return queryFactory
+                .select(auction.id.count())
+                .from(auction)
                 .where(
-                        auctionBookmark.user.id.eq(userId),
-                        auction.status.eq(status)
-                );
+                        auction.winnerId.eq(id),
+                        auction.status.eq(AuctionStatus.CLOSED),
+                        auction.endTime.goe(thisMonthStart),
+                        auction.endTime.lt(nextMonthStart)
+                )
+                .fetchOne();
+    }
 
-        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    @Override
+    public Long findCurrentBiddingCount(Long id) {
+        return queryFactory
+                .select(auction.id.count())
+                .from(auction)
+                .where(
+                        auction.status.eq(AuctionStatus.IN_PROGRESS),
+                        auction.highestBidderId.eq(id)
+                )
+                .fetchOne();
+    }
+
+    @Override
+    public List<CategoryStatsDto> findTop10Categories(Long id) {
+        return queryFactory
+                .select(Projections.constructor(CategoryStatsDto.class,
+                        category.name,
+                        category.name.count()
+                ))
+                .from(auction)
+                .leftJoin(auction.auctionCategories, auctionCategory)
+                .leftJoin(auctionCategory.category, category)
+                .where(
+                        auction.status.eq(AuctionStatus.CLOSED),
+                        auction.winnerId.eq(id)
+                )
+                .groupBy(category.name)
+                .orderBy(category.name.count().desc())
+                .limit(10)
+                .fetch();
+    }
+
+    // 이번달 1일 00:00:00
+    private Instant getStartOfThisMonth() {
+        ZoneId zone = ZoneId.systemDefault();
+        ZonedDateTime now = ZonedDateTime.now(zone);
+        ZonedDateTime startOfMonth = now.withDayOfMonth(1).truncatedTo(ChronoUnit.DAYS);
+        return startOfMonth.toInstant();
+    }
+
+    // 다음달 1일 00:00:00
+    private Instant getStartOfNextMonth() {
+        ZoneId zone = ZoneId.systemDefault();
+        ZonedDateTime now = ZonedDateTime.now(zone);
+        ZonedDateTime startOfNextMonth = now.withDayOfMonth(1)
+                .plusMonths(1)
+                .truncatedTo(ChronoUnit.DAYS);
+        return startOfNextMonth.toInstant();
     }
 
 }

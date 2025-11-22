@@ -13,7 +13,7 @@ const predefinedCategories: readonly CategoryOption[] = [
     { value: 'furniture', label: '가구/인테리어' },
 ];
 
-const CategorySelector = dynamic(() => import('../../components/CategorySelector'), { 
+const CategorySelector = dynamic(() => import('../../components/category/CategorySelector'), { 
     ssr: false,
     loading: () => <p>로딩 중...</p> // 로딩 중에 보여줄 UI
 });

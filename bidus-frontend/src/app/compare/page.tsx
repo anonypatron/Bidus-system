@@ -4,9 +4,9 @@ import { useSearchParams } from "next/navigation";
 import { useAnalyzesQuery } from '../../hooks/useAuctionAnalysis';
 import AuctionAnalysisGraphs from '../components/graph/AuctionAnalysisGraphs';
 import AuctionKeyIndicator from '../components/indicator/AuctionKeyIndicator';
-import LoadingSpinner from "../components/LoadingSpinner";
-import ErrorComponent from "../components/ErrorComponent";
-import EmptyComponent from "../components/EmptyComponent";
+import { LoadingSpinner } from "../components/others/LoadingSpinner";
+import { ErrorComponent } from "../components/others/ErrorComponent";
+import EmptyComponent from "../components/others/EmptyComponent";
 import { useRouter } from "next/navigation";
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#387908', '#e6194B'];
@@ -30,6 +30,8 @@ function ComparePage() {
         return <EmptyComponent/>
     }
 
+    console.log(auctionHistory);
+    
     return (
         <div className="compare-page-container">
             <header className="compare-header">

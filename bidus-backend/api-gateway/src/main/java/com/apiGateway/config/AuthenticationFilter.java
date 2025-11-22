@@ -13,6 +13,11 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * 인증이 필요하지 않은 요청은 jwt를 확인하지 않고 바로 bff로 넘김
+ * 인증이 필요한 요청은 jwt를 확인하고 "X-User-ID"로 사용자 ID값을 넘겨줌.
+ * 인증이 필요한 요청이지만 jwt가 없는 경우 401 Error.
+ */
 @Component
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
 
@@ -36,11 +41,13 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
             String path = request.getURI().getPath();
             HttpMethod method = request.getMethod();
 
+            // 아무나 접근 가능한 api
             boolean isPublic = PUBLIC_ENDPOINTS.stream().anyMatch(path::startsWith);
             if (isPublic/* || isPublicPath(path, method) */) {
                 return chain.filter(exchange);
             }
 
+            // 선택적으로 접근 가능한 api
             if (isOptionalAuthPath(path, method)) {
                 if (request.getCookies().containsKey("accessToken")) {
                     String token = Objects.requireNonNull(request.getCookies().getFirst("accessToken")).getValue();
@@ -54,6 +61,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                 }
                 return chain.filter(exchange);
             }
+
             // 1. "accessToken" 쿠키 존재 여부 확인
             if (!request.getCookies().containsKey("accessToken")) {
                 return handleUnauthorized(exchange); // 401 에러
@@ -73,8 +81,6 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                     .header("X-User-ID", String.valueOf(userId))
                     .build();
 
-//            log.info("게이트웨이 인증 통과: 사용자 ID [{}] 헤더 추가, 전달경로: {}", userId, path);
-            // 5. 다음 필터 또는 서비스로 요청 전달
             return chain.filter(exchange.mutate().request(modifiedRequest).build());
         };
     }

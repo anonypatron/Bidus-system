@@ -17,7 +17,7 @@ export interface Auction {
     categories: Array<string>;
     // winnerId?: number | null;
     finalPrice?: number | null;
-    isBookmarked: boolean;
+    bookmarked: boolean;
 }
 
 export interface PageInfo {

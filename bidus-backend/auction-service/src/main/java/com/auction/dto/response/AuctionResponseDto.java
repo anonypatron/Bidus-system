@@ -1,8 +1,7 @@
 package com.auction.dto.response;
 
-import com.common.AuctionStatus;
 import com.auction.entity.Auction;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.common.AuctionStatus;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -33,9 +32,6 @@ public class AuctionResponseDto {
     private Long winnerId; // 낙찰자 id
     private Long finalPrice; // 낙찰가
 
-    @JsonProperty("isBookmarked")
-    private boolean isBookmarked;
-
     @Builder
     public AuctionResponseDto(
             Long id,
@@ -51,8 +47,7 @@ public class AuctionResponseDto {
             Instant endTime,
             AuctionStatus status,
             Long winnerId,
-            Long finalPrice,
-            boolean isBookmarked
+            Long finalPrice
     ) {
         this.id = id;
         this.sellerId = sellerId;
@@ -68,10 +63,9 @@ public class AuctionResponseDto {
         this.status = status;
         this.winnerId = winnerId;
         this.finalPrice = finalPrice;
-        this.isBookmarked = isBookmarked;
     }
 
-    public static AuctionResponseDto fromEntity(Auction auction, boolean isBookmarked) {
+    public static AuctionResponseDto fromEntity(Auction auction) {
         List<String> categoryNames = auction.getAuctionCategories().stream()
                 .map(auctionCategory -> auctionCategory.getCategory().getName())
                 .collect(Collectors.toList());
@@ -91,7 +85,6 @@ public class AuctionResponseDto {
                 .status(auction.getStatus())
                 .winnerId(auction.getWinnerId())
                 .finalPrice(auction.getFinalPrice())
-                .isBookmarked(isBookmarked)
                 .build();
     }
 

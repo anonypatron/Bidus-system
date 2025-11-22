@@ -1,10 +1,8 @@
 package com.generator.service;
 
-import com.generator.dto.AuctionCreateRequestDto;
-import com.generator.dto.BidRequestDto;
-import com.generator.dto.LoginRequestDto;
-import com.generator.dto.SignupRequestDto;
+import com.generator.dto.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.cookie.BasicCookieStore;
 import org.apache.hc.client5.http.cookie.CookieStore;
@@ -29,10 +27,11 @@ import java.util.Random;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class DataSetupService implements CommandLineRunner {
 
     private final ApplicationContext context;
-    
+
     private final String BASE_URL = "http://localhost";
     private final Random random = new Random();
     private final List<String> CATEGORIES = List.of(
@@ -56,11 +55,11 @@ public class DataSetupService implements CommandLineRunner {
         System.out.println("====== 1. 테스트 유저 생성 완료 ======");
 
         System.out.println("====== 2. 경매 물품 1,000개 생성 시작 (user1~10) ======");
-        createAuctions(1000, 10); // 1,000개를 10명이 나눠서 등록
-        System.out.println("====== 2. 경매 물품 1,000개 생성 완료 ======");
+        createAuctions(1000, 10); // 10,000개를 100명이 나눠서 등록
+        System.out.println("====== 2. 경매 물품 1,0000개 생성 완료 ======");
 
-        System.out.println("====== 3. 입찰 10,000건 생성 시작 (user11~100) ======");
-        placeBids(10000, 11, 100, 1000); // 50,000건을 user101~1000이 10,000개 물품에 입찰
+        System.out.println("====== 3. 입찰 10,000건 생성 시작 (user101~1000) ======");
+        placeBids(10000, 11, 100, 1000); // 100,000건을 user101~1000이 1,000개씩 물품에 입찰
         System.out.println("====== 3. 입찰 10,000건 생성 완료 ======");
     }
 
@@ -77,7 +76,7 @@ public class DataSetupService implements CommandLineRunner {
             for (int i = 1; i <= count; i++) {
                 String email = "user" + i + "@example.com";
                 String username = "user" + i;
-                String password = "1234"; // 모든 유저 비밀번호 통일
+                String password = "1234";
 
                 SignupRequestDto dto = new SignupRequestDto(email, username, password, "USER");
 
@@ -122,7 +121,7 @@ public class DataSetupService implements CommandLineRunner {
                         List.of(CATEGORIES.get(random.nextInt(CATEGORIES.size()))), // 카테고리 1개 랜덤 선택
                         10000L + (random.nextInt(100) * 100), // 10,000 ~ 19,900원
                         Instant.now().plus(1, ChronoUnit.MINUTES), // n분 뒤 시작
-                        Instant.now().plus(7, ChronoUnit.DAYS)     // n분 뒤 마감
+                        Instant.now().plus(2, ChronoUnit.HOURS)     // n분 뒤 마감
                 );
 
                 // 3. Multipart/form-data 요청 구성
@@ -162,21 +161,25 @@ public class DataSetupService implements CommandLineRunner {
             for (int j = 0; j < bidsPerUser; j++) {
                 // 2. 입찰 DTO 생성
                 long randomAuctionId = random.nextInt(totalAuctions) + 1; // 1 ~ totalAuctions
-                long randomPrice = 11000L + (random.nextInt(100) * 100); // 11,000 ~ 20,900원
+                long currentPrice = getCurrentHighestPrice(authRestTemplate, randomAuctionId);
 
-                BidRequestDto dto = new BidRequestDto(randomAuctionId, randomPrice);
+                if (currentPrice == -1L) {
+                    continue; // 이 입찰은 건너뜀
+                }
+
+                long priceIncrement = (random.nextInt(100) + 1) * 100L;
+                long newBidPrice = currentPrice + priceIncrement;
+
+                BidRequestDto dto = new BidRequestDto(randomAuctionId, newBidPrice);
 
                 try {
-                    // 3. API 호출
                     authRestTemplate.postForObject(bidUrl, dto, String.class);
                 } catch (Exception e) {
-                    // 입찰 실패 (예: 낙관적 락 충돌, 마감 등)는 정상일 수 있으므로 간단히 로깅
-                    // System.err.println("입찰 실패: " + e.getMessage());
+                    log.error("입찰 실패 : {}", e.getMessage());
                 }
             }
         }
     }
-
 
     /**
      * [핵심] 로그인을 수행하고, 쿠키(accessToken)가 자동으로 관리되는
@@ -209,6 +212,21 @@ public class DataSetupService implements CommandLineRunner {
             System.err.println("로그인 실패 (" + email + "): " + e.getMessage());
         }
         return null;
+    }
+
+    private long getCurrentHighestPrice(RestTemplate authRestTemplate, long auctionId) {
+        // (가정) 이 API가 현재 최고가 또는 시작가를 반환합니다.
+        String getPriceUrl = BASE_URL + "/api/auctions/" + auctionId + "/current-price";
+
+        try {
+            AuctionPriceDto dto = authRestTemplate.getForObject(getPriceUrl, AuctionPriceDto.class);
+            if (dto != null && dto.getPrice() != null) {
+                return dto.getPrice();
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+        return -1L; // 조회 실패 시 -1 반환
     }
 
 }

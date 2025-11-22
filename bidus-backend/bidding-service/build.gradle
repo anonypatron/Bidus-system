@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.2.5'
+    id 'org.springframework.boot' version '3.5.5'
     id 'io.spring.dependency-management' version '1.1.4'
 }
 
@@ -12,7 +12,7 @@ repositories {
 }
 
 ext {
-    set('springCloudVersion', "2023.0.1")
+    set('springCloudVersion', "2025.0.0")
 }
 
 dependencyManagement {
@@ -32,18 +32,7 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-consul-discovery:4.3.0'
     implementation 'org.springframework.kafka:spring-kafka:3.3.9'
     implementation project(':common-dto')
-
-//    gatling 'io.gatling.highcharts:gatling-charts-highcharts:3.14.6'
-//    gatling 'io.gatling:gatling-core:3.14.6'
-//    gatling 'io.gatling:gatling-http:3.14.6'
-//    gatling 'io.gatling:gatling-java:3.14.6'
 }
-
-//gatling {
-//    enterprise {
-//
-//    }
-//}
 
 test {
     useJUnitPlatform()

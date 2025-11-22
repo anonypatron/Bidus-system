@@ -8,7 +8,7 @@ import { AuctionUpdateFormData, CategoryOption, FormErrors } from '../../../../t
 import { AuctionUpdateModalProps } from '../../../../types/others/modal';
 import axiosInstance from '../../utils/axiosInstance';
 
-const CategorySelector = dynamic(() => import('../CategorySelector'), { 
+const CategorySelector = dynamic(() => import('../category/CategorySelector'), { 
     ssr: false,
     loading: () => <p>로딩 중...</p>
 });

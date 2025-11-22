@@ -8,11 +8,13 @@ import lombok.Getter;
 public class UserInfo {
 
     private String username;
+    private String email;
     private Role role;
 
     @Builder
-    public UserInfo(String username, Role role) {
+    public UserInfo(String username, String email, Role role) {
         this.username = username;
+        this.email = email;
         this.role = role;
     }
 

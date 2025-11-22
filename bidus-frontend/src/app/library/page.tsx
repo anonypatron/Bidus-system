@@ -18,10 +18,11 @@ function LibraryPage() {
         sellerInprogressAuctions,
         sellerScheduledAuctions,
         winnerClosedAuctions,
+        currentBiddingAuctions,
         isLoading,
         isError,
     } = useAuctionHistoryQueries();
-
+    
     const { mutate: deleteAuction } = useDeleteAuction();
     const [showAuctionUpdateModal, setShowAuctionUpdateModal] = useState<boolean>(false);
     const [selectedModalAuctionId, setSelectedModalAuctionId] = useState<number>(0);
@@ -73,6 +74,10 @@ function LibraryPage() {
         router.push(`/auctions/detail?id=${auctionId}`);
     };
 
+    const handleGotoAuctions = (auctionId: number) => {
+        router.push(`/auctions?id=${auctionId}`);
+    };
+
     if (isLoading) {
         return (
             <div className="loading-container">
@@ -113,7 +118,7 @@ function LibraryPage() {
                                             auction={auction} index={idx} type="scheduled"
                                             onUpdateClick={handleOpenUpdateModal}
                                             onDeleteClick={handleDeleteAuction}
-                                            {...{ onDetailClick: () => {}, onCheckboxChange: () => {}, isChecked: false }}
+                                            {...{ onDetailClick: () => {}, onCheckboxChange: () => {}, onRedirect: () => {}, isChecked: false }}
                                         />
                                     ))
                                 ) : (
@@ -144,7 +149,7 @@ function LibraryPage() {
                                         <AuctionRow
                                             key={auction.id}
                                             auction={auction} index={idx} type="inprogress"
-                                            {...{ onUpdateClick: () => {}, onDeleteClick: () => {}, onDetailClick: () => {}, onCheckboxChange: () => {}, isChecked: false }}
+                                            {...{ onUpdateClick: () => {}, onDeleteClick: () => {}, onDetailClick: () => {}, onRedirect: () => {}, onCheckboxChange: () => {}, isChecked: false }}
                                         />
                                     ))
                                 ) : (
@@ -175,7 +180,7 @@ function LibraryPage() {
                                         <AuctionRow
                                             key={auction.id}
                                             auction={auction} index={idx} type="closed"
-                                            {...{ onUpdateClick: () => {}, onDeleteClick: () => {}, onDetailClick: () => {}, onCheckboxChange: () => {}, isChecked: false }}
+                                            {...{ onUpdateClick: () => {}, onDeleteClick: () => {}, onDetailClick: () => {}, onRedirect: () => {}, onCheckboxChange: () => {}, isChecked: false }}
                                         />
                                     ))
                                 ) : (
@@ -186,6 +191,42 @@ function LibraryPage() {
                     </div>
                 </div>
             </div>
+
+            <div className="history-section">
+                <p className="section-title">입찰 현황(현재 최고가)</p>
+                <div className="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style={{ width: '5%' }}>번호</th>
+                                <th style={{ width: '25%' }}>제목</th>
+                                <th style={{ width: '10%' }}>판매자</th>
+                                <th style={{ width: '25%' }}>경매 기간</th>
+                                <th style={{ width: '10%' }}>상태</th>
+                                <th style={{ width: '10%' }}>현재가</th>
+                                <th colSpan={2} style={{ width: '10%' }}>바로가기</th>
+                            </tr>
+                        </thead>
+                        <tbody className="tbody-group">
+                            {currentBiddingAuctions.length > 0 ? (
+                                currentBiddingAuctions.map((auction, idx) => (
+                                    <AuctionRow
+                                        key={auction.id}
+                                        auction={auction}
+                                        index={idx}
+                                        type="current-bidding"
+                                        onRedirect={handleGotoAuctions}
+                                        {...{ onUpdateClick: () => {}, onDeleteClick: () => {}, onDetailClick: () => {}, onCheckboxChange: () => {}, isChecked: false }}
+                                    />
+                                ))
+                            ) : (
+                                <NoDataRow message="입찰한 경매가 없습니다." colSpan={9} />
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <div className="history-section">
                 <p className="section-title">낙찰 현황</p>
                 <div className="table-wrapper">
@@ -213,7 +254,7 @@ function LibraryPage() {
                                         onDetailClick={handleGotoAuctionDetail}
                                         onCheckboxChange={handleCheckBoxChange}
                                         isChecked={selectedCompareIds.has(auction.id)}
-                                        {...{ onUpdateClick: () => {}, onDeleteClick: () => {} }}
+                                        {...{ onUpdateClick: () => {}, onDeleteClick: () => {}, onRedirect: () => {}, }}
                                     />
                                 ))
                             ) : (

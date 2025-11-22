@@ -53,7 +53,6 @@ public class EventPublishService {
                 .title(auction.getTitle())
                 .description(auction.getDescription())
                 .categories(categories)
-                .bookmarkCount((long) auction.getAuctionBookmarks().size())
                 .startPrice(auction.getStartPrice())
                 .currentPrice(auction.getCurrentPrice())
                 .startTime(auction.getStartTime())

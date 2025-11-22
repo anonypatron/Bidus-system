@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import "./globals.css";
 import Providers from './providers';
-import LayoutWrapper from './components/LayoutWrapper';
+import LayoutWrapper from './components/layout/LayoutWrapper';
 
 export const metadata: Metadata = {
   title: "Bidus",

@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 import { PageInfo } from "../../../types/dto/response/auction";
 import { useAuctionSearch } from '../../hooks/useAuctionsQuery';
 import { toast } from '../../lib/toast';
-import EmptyComponent from "../components/EmptyComponent";
-import ErrorComponent from "../components/ErrorComponent";
-import LoadingSpinner from "../components/LoadingSpinner";
+import EmptyComponent from "../components/others/EmptyComponent";
+import { ErrorComponent } from "../components/others/ErrorComponent";
+import { LoadingSpinner } from "../components/others/LoadingSpinner";
 import { formatDateTime } from "../utils/formatDataTime";
 
 function SearchPage() {

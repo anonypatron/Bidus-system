@@ -32,7 +32,7 @@ function AuctionsPage() {
         startTime: '',
         endTime: '',
         status: AuctionStatus.IN_PROGRESS,
-        isBookmarked: false,
+        bookmarked: false,
     });
     
     useEffect(() => {

@@ -1,6 +1,6 @@
 @import 'react-datepicker/dist/react-datepicker.css';
 
-body, html {
+html {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background-color: #f4f7f9;
@@ -8,15 +8,23 @@ body, html {
   line-height:1.6;
 }
 
+body {
+  background-color: var(--dashboard-bg);
+  color: var(--text-primary);
+}
+
 :root {
-    --primary-color: #007bff; /* 파란색 계열 */
-    --primary-hover-color: #0056b3;
-    --accent-color: #6c757d; /* 회색 계열 */
-    --border-color: #e0e0e0;
-    --input-focus-border: var(--primary-color);
-    --error-color: #dc3545;
-    --success-color: #28a745;
-    --text-light-color: #666;
+  --dashboard-bg: #FDFCF5;
+  --card-bg: #FFFFFF;
+  --text-primary: #5D503F;
+  --text-secondary: #8E806A;
+  --accent-primary: #B08968; 
+  --accent-primary-dark: #8A6F4E;
+  --border-color: #F1EEE9;
+
+  --accent-blue-dark: #4A5C6A; /* 짙은 더스티 블루 (그래프 선, 짙은 텍스트) */
+  --accent-blue-light: #EBF0F3; /* 매우 연한 더스티 블루 (배경) */
+  --accent-blue-border: #DDE4E9;
 }
 
 a {
@@ -28,34 +36,16 @@ a {
   box-sizing: border-box;
 }
 
-.error-message {
-  color: #d32f2f; /* 진한 빨간색 (Material Design Error 색상) */
-    font-size: 0.95rem; /* 기본 텍스트보다 살짝 작게 */
-    font-weight: 500; /* 세미-볼드 */
-    text-align: center;
-    
-    background-color: #fce4e4;
-    border: 1px solid #ef9a9a;
-    border-radius: 4px;
-    padding: 10px 15px;
-    
-    margin-top: 10px;
-    margin-bottom: 15px;
-}
-
-/* --- Layout Wrapper --- */
 .layout-container {
   display: flex;
 }
 
-/* --- NavBar --- */
 .navbar {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 900; /* Sidebar(30)보다 훨씬 높게 설정 */
-
+  z-index: 900;
   display: flex;
   align-items: center;
   background-color: #ffffff;
@@ -102,9 +92,9 @@ a {
 
 .search-input:focus {
   outline: none;
-  border-color: #4C6EF5;
+  border-color: #8E806A;
   background-color: #ffffff;
-  box-shadow: 0 0 0 3px rgba(76, 110, 245, 0.2);
+  box-shadow: 0 0 0 3px rgba(142, 128, 106, 0.2);
 }
 
 .search-button {
@@ -140,33 +130,28 @@ a {
   font-weight: bold;
 }
 
-/* --- Sidebar --- */
-/* --- Sidebar (개선된 스타일) --- */
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
   width: 256px;
-  background-color: #ffffff; /* 배경을 더 깔끔한 흰색으로 */
-  border-right: 1px solid #e5e7eb;
+  background-color: #ffffff; /* 🎨 깨끗한 흰색 배경 유지 */
+  border-right: 1px solid #E0F2E9; /* 🎨 연한 녹색 테두리 */
   z-index: 30;
-  padding: 80px 1rem 1rem; /* 상단(NavBar) 여백 및 좌우/하단 여백 */
+  padding: 80px 1rem 1rem;
   transform: translateX(0);
   transition: transform 0.3s ease-in-out;
 }
 
-/* 사이드바가 닫혔을 때 */
 .sidebar.collapsed {
   transform: translateX(-100%);
 }
 
 .sidebar-nav {
   display: flex;
-  flex-direction: column; /* 아이템을 세로로 쌓음 */
-  justify-content: space-between; /* 👈 핵심: 두 <ul>을 위아래로 분리 */
-  
-  /* 부모인 <aside>의 전체 높이를 차지하도록 설정 */
+  flex-direction: column;
+  justify-content: space-between;
   height: 100%;
 }
 
@@ -176,141 +161,207 @@ a {
   margin: 0;
 }
 
-/* 메뉴 아이템(li) 스타일 */
 .sidebar-menu li {
   margin-bottom: 0.25rem;
 }
 
-/* 메뉴 링크(a) 스타일 */
+/* --- 1. 기본 메뉴 아이템 --- */
 .sidebar-menu a {
-  display: flex; /* 아이콘과 텍스트를 정렬하기 위해 flex 사용 */
+  display: flex;
   align-items: center;
-  gap: 0.8rem; /* 아이콘과 텍스트 사이 간격 */
+  gap: 0.8rem;
   padding: 0.8rem 1rem;
   border-radius: 8px;
   text-decoration: none;
-  color: #4a5568; /* 기본 글자색 */
+  color: #3A5A40; /* 🎨 짙은 녹색 텍스트 */
   font-weight: 500;
   transition: background-color 0.2s, color 0.2s;
+  /* 🎨 활성 메뉴와 동일한 테두리 공간 확보 (밀림 방지) */
+  border-left: 4px solid transparent; 
 }
 
-/* 아이콘 스타일 */
 .menu-icon {
   font-size: 1.2rem;
-  color: #718096;
+  color: #588157; /* 🎨 중간 톤 녹색 아이콘 */
   transition: color 0.2s;
 }
 
-/* 메뉴 호버 스타일 */
+/* --- 2. 호버 (Hover) --- */
 .sidebar-menu a:hover {
-  background-color: #f0f2f5; /* 부드러운 회색으로 호버 효과 */
-  color: #1a202c;
+  background-color: #F1F8F1; /* 🎨 매우 연한 녹색 배경 */
+  color: #3A5A40; /* 🎨 짙은 녹색 텍스트 */
 }
 .sidebar-menu a:hover .menu-icon {
-  color: #1a202c;
+  color: #3A5A40; /* 🎨 짙은 녹색 아이콘 */
 }
 
-/* ✨ 활성 메뉴 스타일 (가장 중요) */
+/* --- 3. 활성 (Active) --- */
 .sidebar-menu .active a {
-  background-color: #f0f2ff;
-  border-left: 4px solid #4C6EF5;
+  background-color: #E8F5E9; /* 🎨 연한 녹색 배경 */
+  border-left: 4px solid #4CAF50; /* 🎨 ⭐️ 선명한 나뭇잎 녹색 */
   font-weight: 600;
   box-shadow: none;
-
-  /* 1. (기본값) 아이콘 색상을 포인트색으로 지정 */
-  color: #4C6EF5;
+  color: #388E3C; /* 🎨 짙은 활성 녹색 */
 }
 
 .sidebar-menu .active a .menu-icon {
-  color: #1f2937;
+  color: #4CAF50; /* 🎨 ⭐️ 선명한 나뭇잎 녹색 */
 }
 
-/* --- Main Content --- */
 .main-content {
   flex-grow: 1;
-  padding-top: 64px; /* NavBar 높이 */
-  margin-left: 256px; /* 열린 사이드바의 너비 */
+  padding-top: 64px;
+  margin-left: 256px;
   transition: margin-left 0.3s ease-in-out;
-  padding: 80px 24px 24px; /* 상단(navbar높이+여백), 좌우, 하단 */
+  padding: 80px 24px 24px;
 }
 
-/* 사이드바가 닫혔을 때 메인 콘텐츠의 마진을 0으로 만듦 */
 .main-content.sidebar-collapsed {
   margin-left: 0;
 }
 
-/* signup & login */
 .signup-container,
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 80vh; /* 페이지 최소 높이 */
   padding: 2rem;
-  background-color: #f8f9fa; /* 따뜻한 느낌의 아주 연한 회색 */
+  background-color: var(--dashboard-bg);
 }
 
-/* 카드: 폼의 전체적인 틀입니다. */
 .signup-card,
 .login-card {
-  background-color: #ffffff;
-    border: 1px solid #d0d7de; /* 👈 GitHub의 연한 테두리 */
-    border-radius: 8px;
-    padding: 2.5rem; /* 넉넉한 내부 여백 */
-    width: 100%;
-    max-width: 480px; /* 폼의 최대 너비 */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background-color: var(--card-bg);
+  padding: 2.5rem 3rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border-color);
+  width: 100%;
+  max-width: 450px;
 }
 
-/* --- 폼 제목 --- */
 .signup-title,
 .login-title {
   text-align: center;
-    font-size: 1.75rem;
-    font-weight: 600;
-    color: #24292e; /* 👈 진한 회색 텍스트 */
-    margin-top: 0;
-    margin-bottom: 2rem; /* 위쪽 마진 제거 */
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 0;
+  margin-bottom: 2rem;
 }
 
-/* --- 공통 폼 요소 (가장 중요) --- */
-/* 입력 필드 그룹 (라벨 + 인풋) */
+/* --- 2. Forms & Inputs --- */
+
+.signup-form,
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem; /* 폼 그룹 간의 간격 */
+}
+
 .form-group {
   margin-bottom: 1.5rem;
 }
 
-/* 라벨 스타일 */
 .form-group label {
-  display: block;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #333;
-    margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
 }
 
-/* 인풋 필드 스타일 */
 .form-input {
-    width: 100%;
-    padding: 10px 12px;
-    font-size: 1rem;
-    color: #24292e;
-    background-color: #f6f8fa; /* 👈 GitHub 스타일의 연한 배경 */
-    border: 1px solid #d0d7de; /* 👈 연한 테두리 */
-    border-radius: 6px;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--text-primary);
+  background-color: var(--card-bg); /* GitHub 스타일(#f6f8fa) 대신 카드 배경색 사용 */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .form-input::placeholder {
-  color: #adb5bd;
+  color: #C0B8A9; /* placeholder용 연한 브라운 */
 }
 
-/* 인풋 필드 포커스 효과 */
-.form-input:focus {
+.form-input:focus,
+.form-input:focus-visible {
   outline: none;
-    border-color: #0969da; /* 👈 포커스 시 파란색 테두리 */
-    background-color: #ffffff;
-    /* 👈 파란색 "Glow" 효과 */
-    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.3); /* 세련된 파란색으로 포커스 강조 */
+  border-color: var(--accent-primary); /* 포커스 시 GitHub 파란색 대신 포인트 색상 */
+  box-shadow: 0 0 0 3px rgba(176, 137, 104, 0.2);
+}
+
+/* --- 3. Buttons (Login, Signup) --- */
+
+.signup-button,
+.login-button {
+  width: 100%;
+  padding: 0.85rem 1.5rem;
+  margin-top: 0.5rem; /* 폼 그룹 간격이 있으므로 margin-top 줄임 */
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  /* GitHub 회색 버튼 대신 메인 포인트 색상 적용 */
+  background-color: var(--accent-primary);
+  color: white;
+}
+
+.signup-button:hover,
+.login-button:hover {
+  background-color: var(--accent-primary-dark);
+}
+
+.signup-button:disabled,
+.login-button:disabled {
+  background-color: var(--border-color);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.withdraw-container {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.withdraw-button {
+  width: 100%;
+  padding: 0.85rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  /* GitHub 빨간색 대신 테라코타 레드로 변경 */
+  background-color: transparent;
+  color: var(--danger-text);
+  border: 1px solid var(--danger-text);
+}
+
+.withdraw-button:hover {
+  background-color: var(--danger-bg-light);
+  color: var(--danger-text);
+}
+
+/* --- 5. Error Message --- */
+
+.error-message {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background-color: var(--danger-bg-light);
+  color: var(--danger-text);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
 }
 
 .form-actions {
@@ -320,7 +371,7 @@ a {
 .update-button {
     width: 100%;
     padding: 14px 24px;
-    background-color: #171717; /* 👈 Vercel/Linear 스타일의 검은색 */
+    background-color: #171717;
     color: white;
     border: none;
     border-radius: 8px;
@@ -335,7 +386,7 @@ a {
 
 .update-button:hover {
     background-color: #2a2a2a;
-    transform: translateY(-2px); /* 👈 호버 시 살짝 뜨는 효과 */
+    transform: translateY(-2px);
 }
 
 .update-button:active {
@@ -349,46 +400,40 @@ a {
     transform: none;
 }
 
-.error-message {
-    color: #d73a49; /* 👈 GitHub Danger Red */
-    background-color: #ffeef0; /* 연한 빨간 배경 */
+/* .error-message {
+    color: #d73a49;
+    background-color: #ffeef0;
     border: 1px solid #d73a49;
     border-radius: 6px;
     padding: 1rem;
     margin-bottom: 1.5rem;
     font-size: 0.9rem;
     text-align: center;
-}
-
-/* --- 버튼 --- */
+} */
+/* 
 .signup-button,
 .login-button {
   width: 100%;
   padding: 14px 24px;
   margin-top: 20px;
-  background-color: #f6f8fa; /* 👈 거의 흰색에 가까운 회색 */
-  color: #24292e; /* 👈 진한 회색 텍스트 */
-  border: 1px solid rgba(27, 31, 35, 0.15); /* 👈 연한 회색 테두리 */
+  background-color: #f6f8fa;
+  color: #24292e;
+  border: 1px solid rgba(27, 31, 35, 0.15);
   border-radius: 8px;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  
-  /* [핵심] 미세한 외부 그림자 + 미세한 내부(inset) 그림자 */
   box-shadow: 0 1px 0 rgba(27, 31, 35, 0.04), 
               inset 0 1px 0 hsla(0, 0%, 100%, 0.25);
-  
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-/* 버튼 호버 효과 */
 .signup-button:hover,
 .login-button:hover {
-  background-color: #f3f4f6; /* 👈 호버 시 살짝 더 어두운 회색 */
+  background-color: #f3f4f6;
   border-color: rgba(27, 31, 35, 0.25);
 }
 
-/* 버튼 클릭 효과 */
 .signup-button:active,
 .login-button:active {
   background-color: #ebecf0;
@@ -397,21 +442,21 @@ a {
 
 .signup-button:disabled {
   background-color: #f6f8fa;
-  color: #959da5; /* 👈 더 연한 회색 텍스트 */
+  color: #959da5;
   border-color: rgba(27, 31, 35, 0.1);
   cursor: not-allowed;
   box-shadow: none;
-}
+} */
 
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #ffffff; /* 흰색 배경 */
-  color: #212529; /* 기본 글자색 (어두운 회색) */
+  background-color: var(--card-bg); /* 🎨 흰색 배경 */
+  color: var(--text-primary);        /* 🎨 기본 텍스트 */
   padding: 0 1.5rem;
   height: 64px;
-  border-bottom: 1px solid #dee2e6; /* 배경과 구분을 위한 얇은 하단 테두리 */
+  border-bottom: 1px solid var(--border-color); /* 🎨 베이지 테두리 */
 }
 
 /* 햄버거 메뉴 버튼 */
@@ -420,8 +465,12 @@ a {
   border: none;
   cursor: pointer;
   padding: 0.5rem;
-  color: #212529; /* 아이콘 색상 */
-  margin-right: 1rem; /* 로고와의 간격 */
+  color: var(--text-secondary); /* 🎨 보조 텍스트 색상 */
+  margin-right: 1rem;
+}
+
+.navbar-toggle-btn:hover {
+  color: var(--text-primary);
 }
 
 .navbar-toggle-btn svg {
@@ -429,22 +478,31 @@ a {
   height: 1.5rem;
 }
 
-/* 왼쪽/오른쪽 그룹 */
+/* [레이아웃 수정] 왼쪽/중앙/오른쪽 그룹 */
 .navbar-left,
 .navbar-right {
   display: flex;
   align-items: center;
   gap: 1.5rem;
+  flex-shrink: 0; /* 너비가 줄어들지 않도록 고정 */
 }
 
-/* navbar-right가 화면 끝에 붙도록 설정 */
-.navbar-left {
-  margin-right: auto; /* 왼쪽 그룹을 제외한 나머지 공간을 모두 오른쪽으로 밀어냄 */
+.navbar-center {
+  flex-grow: 1; /* 🎨 중앙이 남은 공간을 모두 차지 */
+  display: flex;
+  justify-content: center; /* 🎨 SearchBox를 중앙에 배치 */
+  padding: 0 1.5rem; /* 좌우 여백 */
+}
+
+/* 로고 아이콘 (RiAuctionFill) */
+.navbar-left > svg {
+  font-size: 1.5rem;
+  color: var(--accent-primary); /* 🎨 포인트 색상 */
 }
 
 /* 링크 스타일 */
 .navbar-link {
-  color: #343a40; /* 링크 글자색 */
+  color: var(--text-secondary); /* 🎨 보조 텍스트 색상 */
   text-decoration: none;
   font-size: 1rem;
   font-weight: 500;
@@ -452,37 +510,59 @@ a {
 }
 
 .navbar-link:hover {
-  color: #007bff; /* 호버 시 포인트 색상 */
+  color: var(--accent-primary); /* 🎨 호버 시 포인트 색상 */
 }
 
 /* 로고/프로젝트 이름 */
 .navbar-brand {
   font-size: 1.25rem;
   font-weight: bold;
+  color: var(--text-primary); /* 🎨 짙은 기본 텍스트 */
+}
+/* .navbar-link.navbar-brand:hover는 색상 변경 안 함 */
+.navbar-link.navbar-brand:hover {
+  color: var(--text-primary); 
 }
 
 /* "안녕하세요, 00님" 텍스트 */
 .navbar-text {
   white-space: nowrap;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
 }
 
-/* 기본 버튼 스타일 */
+/* --- 버튼 스타일 (로그인/로그아웃) --- */
+
+/* [테마 적용] 기본 버튼 (로그인 버튼에 적용됨) */
 .navbar-button {
   padding: 7px 14px;
-  border: 1px solid #6c757d;
-  background-color: transparent;
-  color: #6c757d;
-  border-radius: 6px;
+  border: 1px solid var(--accent-primary);
+  background-color: var(--accent-primary);
+  color: white;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 600;
   text-decoration: none;
   display: inline-block;
-  transition: background-color 0.2s, color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .navbar-button:hover {
-  background-color: #6c757d;
-  color: #ffffff;
+  background-color: var(--accent-primary-dark);
+  border-color: var(--accent-primary-dark);
+}
+
+/* [테마 적용] 로그아웃 버튼 (더 차분한 아웃라인 스타일) */
+.logout-button {
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.logout-button:hover {
+  background-color: var(--dashboard-bg);
+  border-color: var(--border-color);
+  color: var(--text-primary);
 }
 
 /* 로그아웃 버튼만 특별 스타일 적용 */
@@ -525,28 +605,6 @@ a {
     font-weight: 600;
     font-size: 15px;
     color: #34495e;
-}
-
-/* 모든 input과 textarea의 공통 스타일 */
-.form-input {
-    width: 100%;
-    padding: 12px 15px; /* 좌우 패딩 증가 */
-    border: 1px solid var(--border-color);
-    border-radius: 8px; /* 둥근 모서리 */
-    font-size: 16px;
-    box-sizing: border-box;
-    transition: all 0.2s ease-in-out;
-}
-
-.form-input::placeholder {
-    color: var(--text-light-color);
-    opacity: 0.7;
-}
-
-.form-input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
 
 textarea.form-input {
@@ -1050,7 +1108,7 @@ textarea.form-input {
   justify-content: space-between;
   align-items: center;
   padding: 15px;
-  background-color: #f1f3f5;
+  background-color: #F2EDE9;
   border-radius: var(--border-radius-md);
 }
 
@@ -1071,7 +1129,7 @@ textarea.form-input {
   font-size: 1.2rem;
   font-weight: 600;
   color: white;
-  background-color: var(--primary-color);
+  background-color: rgba(142, 128, 106, 1);
   border: none;
   border-radius: var(--border-radius-sm);
   cursor: pointer;
@@ -1079,7 +1137,7 @@ textarea.form-input {
 }
 
 .submit-bid-button:hover {
-  background-color: var(--primary-hover-color);
+  background-color: rgba(142, 128, 106, 0.7);
 }
 
 .loading-container {
@@ -1199,8 +1257,8 @@ textarea.form-input {
 .history-container {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     padding: 2rem;
-    background-color: #f8f9fa; /* 라이트 모드 배경 */
-    color: #212529;
+    background-color: var(--dashboard-bg);
+    color: var(--text-primary);
 }
 
 .history-section {
@@ -1584,116 +1642,67 @@ textarea.form-input {
   100% { transform: rotate(360deg); }
 }
 
-/* 탈퇴 버튼을 감싸는 컨테이너 */
-.withdraw-container {
-  margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #e1e4e8; /* 👈 폼과 선을 그어 분리 */
-    text-align: center; /* 패딩이 너비에 포함되도록 설정 */
-}
-
-/* 탈퇴 버튼 자체의 스타일 */
-.withdraw-button {
-  padding: 10px 18px;
-    
-    /* 기본 상태: 빨간색 텍스트의 흰색 버튼 */
-    background-color: #f6f8fa;
-    color: #d73a49; /* 👈 GitHub Danger Red 텍스트 */
-    border: 1px solid rgba(27, 31, 35, 0.15);
-    
-    border-radius: 8px;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    box-shadow: 0 1px 0 rgba(27, 31, 35, 0.04);
-    
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-}
-
-/* 마우스를 올렸을 때의 효과 */
-.withdraw-button:hover {
-  background-color: #d73a49; /* 👈 빨간색 배경 */
-    color: #ffffff; /* 👈 흰색 텍스트 */
-    border-color: #d73a49;
-}
-
-.withdraw-button:active {
-  background-color: #b92534; /* 더 진한 빨간색 */
-    border-color: #b92534;
-    color: #ffffff;
-}
-
-.withdraw-button:disabled {
-  background-color: #f6f8fa;
-    color: #cb7a81; /* 👈 희미해진 빨간색 텍스트 */
-    border-color: rgba(27, 31, 35, 0.1);
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
 .auction-detail-page {
-    background-color: #f4f7f9; /* 부드러운 회색 배경 */
-    padding: 2rem; /* 전체 페이지 여백 */
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* 시스템 기본 폰트 사용 */
-    min-height: 100vh; /* 페이지 높이를 화면 전체로 설정 */
+  background-color: var(--dashboard-bg); /* 🎨 베이지 배경 */
+  padding: 2rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  min-height: calc(100vh - 64px); /* (Navbar 높이 제외) */
 }
 
 /* 페이지 헤더 (제목 영역) */
 .auction-detail-header {
-    margin-bottom: 2rem; /* 그래프와의 간격 */
-    padding-bottom: 1rem; /* 제목 아래 여백 */
-    border-bottom: 2px solid #e2e8f0; /* 구분선 */
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  /* 🎨 포인트 색상으로 구분선 */
+  border-bottom: 2px solid var(--accent-blue-dark); 
 }
 
 /* 경매 제목 스타일 */
 .auction-detail-title {
-    font-size: 2.25rem; /* 제목 폰트 크기 */
-    font-weight: 700; /* 굵은 글씨체 */
-    color: #1a202c; /* 진한 회색 텍스트 */
-    margin: 0; /* 기본 마진 제거 */
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--text-primary); /* 🎨 짙은 브라운 텍스트 */
+  margin: 0;
 }
 
 /* 그래프를 감싸는 컨테이너 (카드 디자인) */
 .auction-graph-container {
-    background-color: #ffffff; /* 흰색 배경 */
-    border-radius: 12px; /* 부드러운 모서리 */
-    padding: 2rem; /* 카드 내부 여백 */
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* 입체감을 주는 그림자 효과 */
-    border: 1px solid #e2e8f0; /* 옅은 테두리 */
+  background-color: var(--card-bg); /* 🎨 흰색 배경 */
+  min-height: 650px; /* 높이 유지 */
+  border-radius: 12px;
+  padding: 2rem;
+  /* 🎨 그림자를 조금 더 부드럽게 */
+  box-shadow: 0 8px 16px rgba(106, 124, 137, 0.1); 
+  border: 1px solid var(--border-color); /* 🎨 베이지 테두리 */
 }
 
-/* 로딩 스피너 스타일 (추가 제안) */
-.loading-spinner-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    font-size: 1.2rem;
-    color: #4a5568;
-}
+/* ... (로딩 스피너는 그대로) ... */
 
+/* [테마 적용] 그래프 플레이스홀더 */
 .graph-placeholder-container {
-    display: flex; /* 내부 텍스트를 중앙 정렬하기 위해 flex 사용 */
-    justify-content: center; /* 가로 중앙 정렬 */
-    align-items: center; /* 세로 중앙 정렬 */
-    min-height: 400px; /* 그래프의 최소 높이와 유사하게 설정하여 레이아웃 유지 */
-    
-    background-color: #f8fafc; /* 매우 옅은 회색 배경 */
-    border: 2px dashed #e2e8f0; /* 점선 테두리로 비어있음을 암시 */
-    border-radius: 12px; /* 기존 카드와 통일성을 위한 모서리 둥글게 처리 */
-    
-    /* 기존 카드 컨테이너와 동일한 패딩과 그림자 적용 */
-    padding: 2rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  
+  /* 🎨 포인트 색상의 연한 버전 사용 */
+  background-color: var(--accent-blue-light);
+  border: 2px dashed var(--accent-blue-border);
+  border-radius: 12px;
+  
+  padding: 2rem;
+  /* 🎨 그림자도 푸른 톤으로 변경 */
+  box-shadow: 0 8px 16px rgba(106, 124, 137, 0.07);
 }
 
 /* 실제 안내 메시지 텍스트 */
 .graph-placeholder-text {
-    font-size: 1.1rem; /* 텍스트 크기 */
-    font-weight: 500; /* 약간 굵은 글씨체 */
-    color: #718096; /* 부드러운 회색 텍스트 */
-    text-align: center; /* 텍스트 중앙 정렬 */
-    margin: 0; /* 단락(p) 태그의 기본 마진 제거 */
+  font-size: 1.1rem;
+  font-weight: 500;
+  /* 🎨 텍스트 색상도 푸른 계열로 통일 */
+  color: var(--accent-blue-dark);
+  text-align: center;
+  margin: 0;
 }
 
 .compare-page-container {
@@ -1884,11 +1893,11 @@ textarea.form-input {
     z-index: 1000;
 }
 
-.compare-sticky-footer p {
+/* .compare-sticky-footer p {
     margin: 0;
     font-size: 1rem;
     font-weight: 500;
-}
+} */
 
 .compare-button {
     background-color: #00bcd4; /* (디자인에 맞게 수정) */
@@ -2051,7 +2060,7 @@ textarea.form-input {
 .submitButton {
   width: 100%;
   padding: 0.9rem;
-  background-color: #0070f3; /* (예시) Next.js 블루 */
+  background-color: #8E806A; /* (예시) Next.js 블루 */
   color: white;
   border: none;
   border-radius: 4px;
@@ -2062,7 +2071,7 @@ textarea.form-input {
 }
 
 .submitButton:hover {
-  background-color: #005bb5;
+  background-color: rgba(142, 128, 106, 0.7);
 }
 
 .searchModalH3 {
@@ -2080,4 +2089,390 @@ input[type="number"] {
   -webkit-appearance: textfield;
   -moz-appearance: textfield;
   appearance: textfield;
+}
+
+.dashboard-container {
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 1.5rem;
+}
+
+/* === 공통 카드 스타일 === */
+.dashboard-card {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+}
+
+/* === 개별 카드 스타일 === */
+
+/* 1. 헤더 */
+.dashboard-header {
+  /* 그리드의 모든 열(column)에 걸침 */
+  grid-column: 1 / -1; 
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.dashboard-header h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* 2. 차트 카드 (2열을 세로로 모두 사용) */
+.chart-card {
+  /* 그리드의 2행에서 시작해서 2칸을 차지 (세로로 길게) */
+  display: flex;
+  flex-direction: column; /* 세로 방향 */
+
+  grid-row: 2 / span 2;
+  grid-column: 1 / 2;
+  min-height: 450px; /* 차트 최소 높이 */
+}
+
+/* 3. 현재 입찰 카드 (Hero Card) */
+.bidding-card {
+  grid-row: 2 / 3;
+  grid-column: 2 / 3;
+  
+  /* 개성 포인트: 그라데이션 배경으로 강조 */
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-primary-dark));
+  color: white;
+  text-align: center;
+}
+
+.bidding-card .stat-value {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-top: 1rem;
+}
+
+.bidding-card .stat-label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 0.5rem;
+}
+
+/* 4. 월간 요약 카드 */
+.summary-card {
+  grid-row: 3 / 4;
+  grid-column: 2 / 3;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.summary-item .stat-value {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--accent-primary-dark);
+  margin-bottom: 0.25rem;
+}
+
+.summary-item .stat-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.footer-container {
+  /* 페이지 배경(--dashboard-bg)보다 살짝 짙은
+    --border-color를 배경으로 사용해 공간을 분리합니다. 
+  */
+  background-color: var(--border-color, #F1EEE9);
+  color: var(--text-secondary, #8E806A); /* 기본 텍스트는 부드러운 브라운 */
+  padding: 2.5rem 2rem;
+  margin-top: auto; /* 페이지 내용이 적어도 항상 하단에 고정 */
+  text-align: center;
+}
+
+.footer-links,
+.footer-info,
+.footer-social {
+  margin-bottom: 1.25rem;
+}
+
+/* 마지막 요소의 하단 마진 제거 */
+.footer-links:last-child,
+.footer-info:last-child,
+.footer-social:last-child {
+  margin-bottom: 0;
+}
+
+/* Copyright, 연락처 텍스트 */
+.footer-info p {
+  margin: 0.3rem 0;
+  font-size: 0.9rem;
+}
+
+/* 푸터의 모든 링크 스타일 */
+.footer-container a {
+  color: var(--text-primary, #5D503F); /* 짙은 브라운 */
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+/* [핵심] 링크 호버 시 포인트 색상으로 변경 */
+.footer-container a:hover {
+  color: var(--accent-primary, #B08968);
+  text-decoration: underline;
+}
+
+/* 링크 구분자 | */
+.footer-links span,
+.footer-social span {
+  margin: 0 0.5rem;
+  color: var(--text-secondary, #8E806A);
+}
+
+.cs-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  min-height: 80vh;
+  background-color: var(--dashboard-bg); /* 베이지 배경 */
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* --- 1. 헤더 --- */
+.cs-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.cs-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.cs-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.cs-search-bar {
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.cs-search-bar .search-icon {
+  position: absolute;
+  left: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent-primary); /* 포인트 색상 */
+  font-size: 1.2rem;
+}
+
+.cs-search-input {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  border-radius: 50px; /* 둥근 검색창 */
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+  font-size: 1rem;
+  color: var(--text-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+}
+
+.cs-search-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 4px 15px rgba(176, 137, 104, 0.15);
+}
+
+/* --- 2. 퀵 메뉴 (카드) --- */
+.cs-quick-menu {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3.5rem;
+}
+
+.quick-card {
+  background-color: var(--card-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.quick-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent-primary);
+}
+
+.quick-card .icon-wrapper {
+  width: 50px;
+  height: 50px;
+  background-color: #F4EFEA; /* 연한 포인트 배경 */
+  color: var(--accent-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin: 0 auto 1rem auto;
+}
+
+.quick-card h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.quick-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* --- 3. FAQ 아코디언 --- */
+.cs-faq-section {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  padding: 2.5rem;
+  border: 1px solid var(--border-color);
+  margin-bottom: 3rem;
+}
+
+.section-heading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+}
+
+.faq-question {
+  width: 100%;
+  text-align: left;
+  padding: 1.25rem 0.5rem;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: color 0.2s;
+}
+
+.faq-question:hover {
+  color: var(--accent-primary);
+}
+
+.faq-category {
+  font-size: 0.85rem;
+  color: var(--accent-primary);
+  background-color: #F4EFEA;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  margin-right: 1rem;
+  font-weight: 600;
+}
+
+.faq-text {
+  flex-grow: 1;
+}
+
+/* 아코디언 애니메이션 */
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  background-color: #FAFAFA; /* 답변 배경은 아주 연한 회색 */
+}
+
+.faq-item.open .faq-answer {
+  max-height: 200px; /* 충분한 높이 지정 */
+  transition: max-height 0.3s ease-in;
+}
+
+.answer-content {
+  padding: 1.5rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* --- 4. 하단 배너 --- */
+.cs-contact-banner {
+  text-align: center;
+  padding: 3rem;
+  background-color: #F4EFEA; /* 테마의 연한 포인트 컬러 배경 */
+  border-radius: 12px;
+  color: var(--text-primary);
+}
+
+.cs-contact-banner p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.contact-button {
+  padding: 0.8rem 2rem;
+  background-color: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-bottom: 1.5rem;
+}
+
+.contact-button:hover {
+  background-color: var(--accent-primary-dark);
+}
+
+.contact-info {
+  font-size: 0.9rem !important; /* 상위 p 스타일 덮어쓰기 */
+  color: var(--text-secondary);
+  margin-bottom: 0 !important;
 }

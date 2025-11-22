@@ -7,7 +7,7 @@ import DatePicker from 'react-datepicker';
 import { AuctionCreateFormData, CategoryOption, FormErrors } from '../../../types/dto/request/auction';
 import { useSales } from '../../hooks/useSales';
 
-const CategorySelector = dynamic(() => import('../components/CategorySelector'), { 
+const CategorySelector = dynamic(() => import('../components/category/CategorySelector'), { 
     ssr: false,
     loading: () => <p>로딩 중...</p> // 로딩 중에 보여줄 UI
 });

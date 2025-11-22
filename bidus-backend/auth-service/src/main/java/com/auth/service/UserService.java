@@ -28,6 +28,7 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         return UserInfo.builder()
                 .username(user.getUsername())
+                .email(user.getEmail())
                 .role(user.getRole())
                 .build();
     }

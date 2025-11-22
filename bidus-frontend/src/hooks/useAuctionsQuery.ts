@@ -1,4 +1,4 @@
-import { fetchAllInprogressAuctions, fetchAuctionHistory, deleteAuction } from "@/api/auctions"
+import { fetchAllInprogressAuctions, fetchAuctionHistory, deleteAuction, fetchAuctionCurrentBidding } from '../api/auctions';
 import { useQueries, useQuery } from "@tanstack/react-query"
 import { fetchSearchByKeyword } from '../api/search';
 import { SearchParams } from '../../types/dto/request/search';
@@ -32,7 +32,6 @@ export const AUCTION_HISTORY_KEYS = {
 };
 
 export const useAuctionHistoryQueries = () => {
-
     const sellerClosed = { role: 'seller', status: 'CLOSED' } as const;
     const sellerInProgress = { role: 'seller', status: 'IN_PROGRESS' } as const;
     const sellerScheduled = { role: 'seller', status: 'SCHEDULED' } as const;
@@ -56,6 +55,10 @@ export const useAuctionHistoryQueries = () => {
                 queryKey: AUCTION_HISTORY_KEYS.list(winnerClosed),
                 queryFn: () => fetchAuctionHistory('winner', 'CLOSED'),
             },
+            {
+                queryKey: ['me'],
+                queryFn: () => fetchAuctionCurrentBidding(),
+            },
         ],
     });
 
@@ -67,6 +70,7 @@ export const useAuctionHistoryQueries = () => {
         sellerInprogressAuctions: results[1].data ?? [],
         sellerScheduledAuctions: results[2].data ?? [],
         winnerClosedAuctions: results[3].data ?? [],
+        currentBiddingAuctions: results[4].data ?? [],
         isLoading,
         isError,
     };

@@ -8,15 +8,17 @@ export const AuctionRow = ({
     onUpdateClick,
     onDeleteClick,
     onDetailClick,
+    onRedirect,
     onCheckboxChange,
     isChecked
 }: { 
     auction: Auction, 
     index: number, 
-    type: 'scheduled' | 'inprogress' | 'closed' | 'winner',
+    type: 'scheduled' | 'inprogress' | 'closed' | 'winner' | 'current-bidding',
     onUpdateClick: (id: number) => void,
     onDeleteClick: (id: number) => void,
     onDetailClick: (id: number) => void,
+    onRedirect: (id: number) => void,
     onCheckboxChange: (id: number) => void,
     isChecked: boolean
 }) => {
@@ -31,6 +33,9 @@ export const AuctionRow = ({
         }
         if (type === 'winner') {
             return auction.finalPrice ? `${auction.finalPrice.toLocaleString()}원` : 'N/A';
+        }
+        if (type === 'current-bidding') {
+            return auction.currentPrice ? `${auction.currentPrice.toLocaleString()}원` : '미정';
         }
         return '미정';
     };
@@ -50,7 +55,10 @@ export const AuctionRow = ({
                 <td colSpan={2}><button onClick={() => onDetailClick(auction.id)} className="update-button">기록 보기</button></td>
             );
         }
-        // inprogress, closed는 빈 <td> 2개를 반환하여 컬럼을 맞춥니다.
+
+        if (type === 'current-bidding') {
+            return <td><button onClick={() => onRedirect(auction.id)} className="update-button">바로가기</button></td>
+        }
         return <td colSpan={2}></td>;
     };
 

@@ -7,11 +7,9 @@ import org.hibernate.annotations.BatchSize;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-@NoArgsConstructor(access =  AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Getter
 @Setter
@@ -35,9 +33,6 @@ public class Auction {
     @OneToMany(mappedBy = "auction", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size = 100)
     private List<AuctionCategory> auctionCategories = new ArrayList<>();
-
-    @OneToMany(mappedBy = "auction", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
-    private Set<AuctionBookmark> auctionBookmarks = new HashSet<>();
 
     @Column(nullable = false)
     private Long startPrice;

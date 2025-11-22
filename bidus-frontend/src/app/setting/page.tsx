@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import { UpdateFormData } from '../../../types/dto/request/login';
 import { UserContext } from '../context/UserProvider';
 import axiosInstance from '../utils/axiosInstance';
-import LoadingSpinner from "../components/LoadingSpinner";
+import { LoadingSpinner } from "../components/others/LoadingSpinner";
 
 function SettingPage() {
     const router = useRouter();

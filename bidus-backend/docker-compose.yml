@@ -46,7 +46,19 @@ services:
       - "5435:5432"
     volumes:
       - postgres-analysis-data:/var/lib/postgresql/data
-      
+
+  postgres-bookmark:
+    image: postgres:15
+    container_name: postgres-bookmark
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: bookmark
+    ports:
+      - "5436:5432"
+    volumes:
+      - postgres-bookmark-data:/var/lib/postgresql/data
+
   nginx:
     image: nginx:1.29.1
     container_name: nginx
@@ -259,11 +271,41 @@ services:
     ports:
       - "8087:8087"
 
+  bookmark-service:
+    build:
+      context: .
+      dockerfile: bookmark-service/Dockerfile
+    image: bookmark-service:0.1
+    container_name: bookmark-service
+    depends_on:
+      postgres-bookmark:
+        condition: service_started
+      consul:
+        condition: service_started
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-bookmark:5432/bookmark
+      - SPRING_CLOUD_CONSUL_HOST=consul
+    ports:
+      - "8088:8088"
+
+  web-bff-service:
+    build:
+      context: .
+      dockerfile: web-bff-service/Dockerfile
+    image: web-bff-service:0.1
+    container_name: web-bff-service
+    depends_on:
+      consul:
+        condition: service_started
+    ports:
+      - "8089:8089"
+
 volumes:
   postgres-auth-data: {}
   postgres-auction-data: {}
   postgres-bidding-data: {}
   postgres-analysis-data: {}
+  postgres-bookmark-data: {}
   esdata:
     driver: local
 

@@ -22,7 +22,6 @@ public class AuctionSyncEvent {
 
     private List<String> categories;
 
-    private Long bookmarkCount;
     private Long startPrice;
     private Long currentPrice;
 
@@ -40,7 +39,6 @@ public class AuctionSyncEvent {
             String title,
             String description,
             List<String> categories,
-            Long bookmarkCount,
             Long startPrice,
             Long currentPrice,
             Instant startTime,
@@ -54,7 +52,6 @@ public class AuctionSyncEvent {
         this.title = title;
         this.description = description;
         this.categories = categories;
-        this.bookmarkCount = bookmarkCount;
         this.startPrice = startPrice;
         this.currentPrice = currentPrice;
         this.startTime = startTime;

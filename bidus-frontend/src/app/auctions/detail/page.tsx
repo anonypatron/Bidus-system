@@ -1,9 +1,10 @@
 'use client';
 
-import LoadingSpinner from '@/app/components/LoadingSpinner';
+import { LoadingSpinner } from '@/app/components/others/LoadingSpinner';
 import { useSearchParams } from 'next/navigation';
 import { useAnalysisQuery } from '../../../hooks/useAuctionAnalysis';
 import AuctionDetailGraph from '../../components/graph/AuctionAnalysisGraph';
+import { ErrorComponent } from '../../components/others/ErrorComponent';
 
 function AuctionDetailPage() {
     const searchParams = useSearchParams();
@@ -16,7 +17,7 @@ function AuctionDetailPage() {
     }
 
     if (isError) {
-        return <div>에러가 발생했습니다: {error?.message || 'Unknown error'}</div>;
+        return <ErrorComponent error={error}/>
     }
 
     if (!auctionAnalysis) {
@@ -29,6 +30,8 @@ function AuctionDetailPage() {
         );
     }
 
+    console.log(auctionAnalysis);
+    
     return (
         <div className="auction-detail-page">
             <div className="auction-detail-header">

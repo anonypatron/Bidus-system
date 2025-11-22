@@ -5,8 +5,8 @@ import { Auction, PageInfo } from '../../../types/dto/response/auction';
 import { formatDateTime } from '../utils/formatDataTime';
 import { useRouter } from 'next/navigation';
 import axiosInstance from '../utils/axiosInstance';
-import LoadingSpinner from '../components/LoadingSpinner';
-import EmptyComponent from '../components/EmptyComponent';
+import { LoadingSpinner } from '../components/others/LoadingSpinner';
+import EmptyComponent from '../components/others/EmptyComponent';
 
 function BookmarkPage() {
     const router = useRouter();
@@ -19,26 +19,26 @@ function BookmarkPage() {
         totalElements: 0,
     });
 
-    useEffect(() => {
-        const fetchBookmarkedAuctions = async () => {
-            setIsLoading(true);
-            try {
-                const res = await axiosInstance.get(`/auctions/bookmark?status=IN_PROGRESS&page=${currentPage}&size=9`);
-                // console.log(res.data);
-                setAuctions(res.data.content);
-                setPageInfo({
-                    page: res.data.number,
-                    totalPages: res.data.totalPages,
-                    totalElements: res.data.totalElements,
-                });
-            } catch (err: any) {
-                console.error(err);
-                setAuctions([]);
-            } finally {
-                setIsLoading(false);
-            }
-        };
+    const fetchBookmarkedAuctions = async () => {
+        setIsLoading(true);
+        try {
+            const res = await axiosInstance.get(`/auctions/bookmark?status=IN_PROGRESS&page=${currentPage}&size=9`);
+            // console.log(res.data);
+            setAuctions(res.data.content);
+            setPageInfo({
+                page: res.data.number,
+                totalPages: res.data.totalPages,
+                totalElements: res.data.totalElements,
+            });
+        } catch (err: any) {
+            console.error(err);
+            setAuctions([]);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchBookmarkedAuctions();
     }, [currentPage]);
 
@@ -72,7 +72,7 @@ function BookmarkPage() {
         e.stopPropagation();
 
         const updateAuctions = auctions.map(auction =>
-            auction.id === auctionId ? { ...auction, isBookmarked: !auction.isBookmarked } : auction
+            auction.id === auctionId ? { ...auction, isBookmarked: !auction.bookmarked } : auction
         );
         setAuctions(updateAuctions);
 
@@ -82,12 +82,13 @@ function BookmarkPage() {
         }
 
         try {
-            if (targetAuction.isBookmarked) {
-                const res = await axiosInstance.post(`/auctions/${auctionId}/bookmark`);
+            if (targetAuction.bookmarked) {
+                const res = await axiosInstance.delete(`/bookmarks/${auctionId}`);
             }
             else {
-                const res = await axiosInstance.delete(`/auctions/${auctionId}/bookmark`);
+                const res = await axiosInstance.post(`/bookmarks/${auctionId}`);
             }
+            fetchBookmarkedAuctions();
         } catch (err: any) {
             console.error(err);
         }
@@ -126,7 +127,7 @@ function BookmarkPage() {
                                     onClick={(e) => handleBookmarkToggle(e, auction.id)}
                                 >
                                     <svg 
-                                        className={`bookmark-icon ${auction.isBookmarked ? 'active' : ''}`}
+                                        className={`bookmark-icon ${auction.bookmarked ? 'active' : ''}`}
                                         xmlns="http://www.w3.org/2000/svg" 
                                         viewBox="0 0 24 24" 
                                         width="24" 

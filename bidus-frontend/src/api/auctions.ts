@@ -24,3 +24,8 @@ export const fetchAuctionHistory = async (role: 'seller' | 'winner', status: 'CL
 export const deleteAuction = async (id: number): Promise<void> => {
     await axiosInstance.delete(`/auctions/${id}`);
 };
+
+export const fetchAuctionCurrentBidding = async (): Promise<Array<Auction>> => {
+    const res = await axiosInstance.get(`/auctions/current-bidding`);
+    return res.data;
+};

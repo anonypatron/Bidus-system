@@ -6,8 +6,8 @@ import { formatDateTime } from './utils/formatDataTime';
 import { Auction, PageInfo } from "../../types/dto/response/auction";
 import axiosInstance from './utils/axiosInstance';
 import { UserContext } from "./context/UserProvider";
-import LoadingSpinner from "./components/LoadingSpinner";
-import EmptyComponent from "./components/EmptyComponent";
+import { LoadingSpinner } from "./components/others/LoadingSpinner";
+import EmptyComponent from "./components/others/EmptyComponent";
 
 function Home() {
     const router = useRouter();
@@ -20,24 +20,24 @@ function Home() {
         totalElements: 0,
     });
     
+    const fetchAllInprogressAuctions = async () => {
+        try {
+            const res = await axiosInstance.get(`/auctions?status=IN_PROGRESS&page=${currentPage}&size=9`);
+            
+            setAuctions(res.data.content);
+            setPageInfo({
+                page: res.data.number,
+                totalPages: res.data.totalPages,
+                totalElements: res.data.totalElements,
+            });
+        } catch (err: any) {
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchAllInprogressAuctions = async () => {
-            try {
-                const res = await axiosInstance.get(`/auctions?status=IN_PROGRESS&page=${currentPage}&size=9`);
-                
-                setAuctions(res.data.content);
-                setPageInfo({
-                    page: res.data.number,
-                    totalPages: res.data.totalPages,
-                    totalElements: res.data.totalElements,
-                });
-            } catch (err: any) {
-                console.error(err);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        
         fetchAllInprogressAuctions();
     }, [currentPage]);
 
@@ -79,7 +79,7 @@ function Home() {
         }
 
         const updateAuctions = auctions.map(auction =>
-            auction.id === auctionId ? { ...auction, isBookmarked: !auction.isBookmarked } : auction
+            auction.id === auctionId ? { ...auction, isBookmarked: !auction.bookmarked } : auction
         );
         setAuctions(updateAuctions);
 
@@ -89,12 +89,13 @@ function Home() {
         }
 
         try {
-            if (targetAuction.isBookmarked) {
-                const res = await axiosInstance.post(`/auctions/${auctionId}/bookmark`);
+            if (targetAuction.bookmarked) {
+                const res = await axiosInstance.delete(`/bookmarks/${auctionId}`);
             }
             else {
-                const res = await axiosInstance.delete(`/auctions/${auctionId}/bookmark`);
+                const res = await axiosInstance.post(`/bookmarks/${auctionId}`);
             }
+            fetchAllInprogressAuctions();
         } catch (err: any) {
             console.error(err);
         }
@@ -129,7 +130,7 @@ function Home() {
                                     onClick={(e) => handleBookmarkToggle(e, auction.id)}
                                 >
                                     <svg 
-                                        className={`bookmark-icon ${auction.isBookmarked ? 'active' : ''}`}
+                                        className={`bookmark-icon ${auction.bookmarked ? 'active' : ''}`}
                                         xmlns="http://www.w3.org/2000/svg" 
                                         viewBox="0 0 24 24" 
                                         width="24" 
