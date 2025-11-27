@@ -5,6 +5,8 @@ WORKDIR /app
 
 COPY . .
 
+RUN chmod +x ./gradlew
+
 RUN ./gradlew :api-gateway:bootJar
 
 FROM eclipse-temurin:21-jre-jammy
