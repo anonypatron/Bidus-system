@@ -20,7 +20,6 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next();
     } catch (error) {
         console.error("JWT 검증 실패:", error);
-        // loginUrl.searchParams.set('message', '세션이 만료되었습니다. 다시 로그인해주세요');
         return NextResponse.redirect(loginUrl);
     }
 }

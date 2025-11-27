@@ -11,7 +11,13 @@ import SearchBox from '../search/SearchBox';
 function Navbar({ onToggleSidebar }: NavbarProps) {
     
     const router = useRouter();
-    const userContext = useContext(UserContext);
+    const userContext = useContext(UserContext);    
+
+    useEffect(() => {
+        if (userContext) {
+            userContext.refreshUserInfo();
+        }
+    }, []);
 
     if (!userContext) {
         console.log("Navbar userContext error");
@@ -19,10 +25,6 @@ function Navbar({ onToggleSidebar }: NavbarProps) {
     }
 
     const { userInfo, refreshUserInfo, setUserInfo, logout } = userContext;
-
-    useEffect(() => {
-        refreshUserInfo();
-    }, []);
 
     const handleLogout = async () => {
         try {

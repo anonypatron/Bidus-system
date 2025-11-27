@@ -7,6 +7,8 @@ import { UserContext } from '../context/UserProvider';
 import axiosInstance from '../utils/axiosInstance';
 import { LoadingSpinner } from "../components/others/LoadingSpinner";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 function SettingPage() {
     const router = useRouter();
     const userContext = useContext(UserContext);
@@ -55,7 +57,7 @@ function SettingPage() {
         }
 
         try {
-            const res = await axiosInstance.patch('http://localhost/api/auth', formData);
+            const res = await axiosInstance.patch(`${API_BASE_URL}/auth`, formData);
             userContext.refreshUserInfo();
             router.push('/login');
         } catch(error) {

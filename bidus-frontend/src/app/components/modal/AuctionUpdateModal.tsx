@@ -8,6 +8,8 @@ import { AuctionUpdateFormData, CategoryOption, FormErrors } from '../../../../t
 import { AuctionUpdateModalProps } from '../../../../types/others/modal';
 import axiosInstance from '../../utils/axiosInstance';
 
+const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_DOMAIN;
+
 const CategorySelector = dynamic(() => import('../category/CategorySelector'), { 
     ssr: false,
     loading: () => <p>로딩 중...</p>
@@ -183,7 +185,7 @@ function AuctionUpdateModal({ auctionId, onClose, onUpdateSuccess }: AuctionUpda
                                 <img src={
                                     imagePreview.startsWith('blob:') 
                                         ? imagePreview 
-                                        : `http://localhost${imagePreview}`
+                                        : `${IMAGE_BASE_URL}${imagePreview}`
                                 } 
                                 alt="미리보기" 
                                 className="image-preview" />

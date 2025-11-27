@@ -1,14 +1,16 @@
 'use client';
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { BidForm } from '../../../types/dto/request/auction';
 import { Auction, AuctionStatus } from '../../../types/dto/response/auction';
 import axiosInstance from '../utils/axiosInstance';
 import { formatDateTime } from '../utils/formatDataTime';
 import { toast } from '../../lib/toast';
 
-function AuctionsPage() {
+const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_DOMAIN;
+
+function AuctionContent() {
     const searchParams = useSearchParams();
     const auctionId = searchParams.get('id');
     
@@ -133,7 +135,7 @@ function AuctionsPage() {
     return (
         <div className="auction-container">
             <div className="auction-image-wrapper">
-                <img src={`http://localhost/${auctionDetail.imagePath}`} alt={auctionDetail.title} className="auction-image" />
+                <img src={`${IMAGE_BASE_URL}${auctionDetail.imagePath}`} alt={auctionDetail.title} className="auction-image" />
             </div>
             <div className="auction-details-wrapper">
                 <h1 className="auction-title">{auctionDetail.title}</h1>
@@ -224,6 +226,14 @@ function AuctionsPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+function AuctionsPage() {
+    return (
+        <Suspense fallback={<div className="auction-container">로딩 중...</div>}>
+            <AuctionContent/>
+        </Suspense>
     );
 }
 

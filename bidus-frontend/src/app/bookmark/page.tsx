@@ -8,6 +8,8 @@ import axiosInstance from '../utils/axiosInstance';
 import { LoadingSpinner } from '../components/others/LoadingSpinner';
 import EmptyComponent from '../components/others/EmptyComponent';
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
 function BookmarkPage() {
     const router = useRouter();
     const [currentPage, setCurrentPage] = useState<number>(0);
@@ -118,7 +120,7 @@ function BookmarkPage() {
             <div className="auction-list">
                 {auctions.map(auction => (
                     <div key={auction.id} className="auction-card" onClick={() => handleGoToBidPage(auction.id)}>
-                        <img src={'http://localhost' + auction.imagePath} alt={auction.title} className="auction-card-image" />
+                        <img src={`${BASE_URL}${auction.imagePath}`} alt={auction.title} className="auction-card-image" />
                         <div className="auction-card-content">
                             <div className="auction-card-header">
                                 <h3>{auction.title}</h3>

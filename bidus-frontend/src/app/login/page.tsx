@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { LoginFormData } from '../../../types/dto/request/login';
 import { useLogin } from '../../hooks/useLogin';
 
-function LoginPage() {
+function LoginContent() {
     const { mutate: login, isPending, isError, error } = useLogin();
     const [clientError, setClientError] = useState<string>('');
     const [formData, setFormData] = useState<LoginFormData>({
@@ -66,6 +66,14 @@ function LoginPage() {
                 </form>
             </div>
         </div>
+    );
+}
+
+function LoginPage() {
+    return (
+        <Suspense fallback={<div className="login-container">로딩 중...</div>}>
+            <LoginContent />
+        </Suspense>
     );
 }
 

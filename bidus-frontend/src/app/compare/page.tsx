@@ -8,10 +8,11 @@ import { LoadingSpinner } from "../components/others/LoadingSpinner";
 import { ErrorComponent } from "../components/others/ErrorComponent";
 import EmptyComponent from "../components/others/EmptyComponent";
 import { useRouter } from "next/navigation";
+import { Suspense } from "react";
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#387908', '#e6194B'];
 
-function ComparePage() {
+function CompareContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
 
@@ -53,6 +54,14 @@ function ComparePage() {
                 </section>
             </main>
         </div>
+    );
+}
+
+function ComparePage() {
+    return (
+        <Suspense fallback={<div className="compare-page-container">로딩 중...</div>}>
+            <CompareContent/>
+        </Suspense>
     );
 };
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { PageInfo } from "../../../types/dto/response/auction";
 import { useAuctionSearch } from '../../hooks/useAuctionsQuery';
 import { toast } from '../../lib/toast';
@@ -10,7 +10,9 @@ import { ErrorComponent } from "../components/others/ErrorComponent";
 import { LoadingSpinner } from "../components/others/LoadingSpinner";
 import { formatDateTime } from "../utils/formatDataTime";
 
-function SearchPage() {
+const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_DOMAIN;
+
+function SearchContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -136,7 +138,7 @@ function SearchPage() {
             <div className="auction-list">
                 {auctions.content.map(auction => (
                     <div key={auction.id} className="auction-card" onClick={() => handleGoToBidPage(auction.id, auction.status.toString())}>
-                        <img src={'http://localhost' + auction.imagePath} alt={auction.title} className="auction-card-image" />
+                        <img src={`${IMAGE_BASE_URL}${auction.imagePath}`} alt={auction.title} className="auction-card-image" />
                         <div className="auction-card-content">
                             <div className="auction-card-header">
                                 <h3>{auction.title}</h3>
@@ -178,6 +180,14 @@ function SearchPage() {
                 </button>
             </div>
         </div>
+    );
+}
+
+function SearchPage() {
+    return (
+        <Suspense fallback={<div className="main-container">로딩 중...</div>}>
+            <SearchContent/>
+        </Suspense>
     );
 }
 

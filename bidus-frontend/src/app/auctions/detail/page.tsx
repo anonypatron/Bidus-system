@@ -5,8 +5,9 @@ import { useSearchParams } from 'next/navigation';
 import { useAnalysisQuery } from '../../../hooks/useAuctionAnalysis';
 import AuctionDetailGraph from '../../components/graph/AuctionAnalysisGraph';
 import { ErrorComponent } from '../../components/others/ErrorComponent';
+import { Suspense } from 'react';
 
-function AuctionDetailPage() {
+function AuctionDetailContent() {
     const searchParams = useSearchParams();
     const auctionId = searchParams.get('id');
 
@@ -43,6 +44,14 @@ function AuctionDetailPage() {
                 <AuctionDetailGraph { ...auctionAnalysis }/>
             </div>
         </div>
+    );
+}
+
+function AuctionDetailPage() {
+    return (
+        <Suspense fallback={<div className='auction-detail-page'>로딩 중...</div>}>
+            <AuctionDetailContent/>
+        </Suspense>
     );
 }
 
