@@ -33,7 +33,8 @@ public class SecurityConfig {
             "/api/auth/logout",
             "/api/auth/token/refresh",
             "/api/auth/**",
-            "/actuator/**"
+            "/actuator/**",
+            "/error"
     };
 
     @Bean
