@@ -29,7 +29,7 @@ function AuctionDetailContent() {
                 </p>
             </div>
         );
-    }
+    } 
 
     console.log(auctionAnalysis);
     
