@@ -30,7 +30,9 @@ jobs:
         IMAGE_TAG=${{ github.sha }}
         
         docker build \
-          --build-arg NEXT_PUBLIC_API_URL=http://k8s-default-auctioni-87154b402a-1303663482.ap-northeast-2.elb.amazonaws.com \
+          --build-arg NEXT_PUBLIC_IMAGE_DOMAIN="auction-images-anonypatron-bucket.s3.ap-northeast-2.amazonaws.com" \
+          --build-arg NEXT_PUBLIC_API_BASE_URL=/api \
+          --build-arg NEXT_PUBLIC_BASE_URL=http://k8s-default-auctioni-87154b402a-1303663482.ap-northeast-2.elb.amazonaws.com \
           -t $DOCKER_IMAGE:$IMAGE_TAG \
           -t $DOCKER_IMAGE:latest \
           .

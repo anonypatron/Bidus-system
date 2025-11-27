@@ -1,20 +1,27 @@
 package com.auction.service;
 
 import com.auction.entity.Auction;
+import io.awspring.cloud.s3.S3Template;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
+@RequiredArgsConstructor
 @Service
+@Slf4j
 public class ImageService {
 
-    @Value("${image.upload.base-dir}")
-    private String baseImageDir;
+    private final S3Template s3Template;
+
+    @Value("${spring.cloud.aws.s3.bucket}")
+    private String bucketName;
+
+    @Value("${spring.cloud.aws.region.static:ap-northeast-2}")
+    private String region;
 
     public String saveImagePath(MultipartFile image, Long auctionId) {
         String originalFilename = image.getOriginalFilename();
@@ -25,14 +32,14 @@ public class ImageService {
         }
 
         String imageName = auctionId + fileExtension; // 1.jpg
-        Path imageFilePath = Paths.get(baseImageDir, imageName);
 
         try {
-            image.transferTo(imageFilePath);
+            // s3에 업로드
+            s3Template.upload(bucketName, imageName, image.getInputStream());
         } catch (IOException e) {
             throw new RuntimeException("이미지 파일 저장에 실패했습니다.", e);
         }
-        return "/images/" + imageName;
+        return "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + imageName;
     }
 
     public String updateImagePath(MultipartFile image, Auction auction) {
@@ -45,15 +52,20 @@ public class ImageService {
     }
 
     public void deleteImagePath(Auction auction) {
-        String existingImageName = auction.getImagePath();
-        if (existingImageName != null && !existingImageName.isEmpty()) {
+        String existingImageUrl = auction.getImagePath();
+
+        if (existingImageUrl != null && !existingImageUrl.isEmpty()) {
             try {
-                Path existingFilePath = Paths.get(baseImageDir, existingImageName.replace("/images/", ""));
-                if (Files.exists(existingFilePath)) {
-                    Files.delete(existingFilePath);
+                String splitStr = ".amazonaws.com/";
+                int index = existingImageUrl.indexOf(splitStr);
+
+                if (index != -1) {
+                    String fileName = existingImageUrl.substring(index + splitStr.length());
+                    s3Template.deleteObject(bucketName, fileName);
+                    log.info("S3 이미지 제거 완료");
                 }
-            } catch (IOException e) {
-                System.out.println("기존 파일 삭제 실패");
+            } catch (Exception e) {
+                log.error("기존 파일 삭제 실패");
             }
         }
     }
