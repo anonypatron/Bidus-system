@@ -33,7 +33,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
         super(Config.class);
         this.jwtUtil = jwtUtil;
     }
-
+ 
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
