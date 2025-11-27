@@ -26,13 +26,14 @@ jobs:
 
     - name: Build and Push
       run: |
+        cd bidus-frontend
         IMAGE_TAG=${{ github.sha }}
         
         docker build \
           --build-arg NEXT_PUBLIC_API_URL=http://k8s-default-auctioni-87154b402a-1303663482.ap-northeast-2.elb.amazonaws.com \
           -t $DOCKER_IMAGE:$IMAGE_TAG \
           -t $DOCKER_IMAGE:latest \
-          -f front/Dockerfile ./bidus-frontend
+          .
         
         docker push $DOCKER_IMAGE:$IMAGE_TAG
         docker push $DOCKER_IMAGE:latest
