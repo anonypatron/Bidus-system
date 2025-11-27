@@ -43,6 +43,8 @@ public class SecurityConfig {
                 .securityMatcher(PERMIT_ALL_URLS) // ✅ 이 필터 체인은 PERMIT_ALL_URLS에만 적용됩니다.
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
