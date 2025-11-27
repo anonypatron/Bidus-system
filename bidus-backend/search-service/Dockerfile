@@ -5,11 +5,10 @@ WORKDIR /app
 
 COPY . .
 
+RUN chmod +x ./gradlew
+
 RUN ./gradlew :search-service:bootJar
 
-# =======================================================
-# 경량화 된 이미지 파일 생성
-# =======================================================
 FROM eclipse-temurin:21-jre-jammy
 
 WORKDIR /app
