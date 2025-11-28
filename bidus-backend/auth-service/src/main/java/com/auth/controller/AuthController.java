@@ -12,6 +12,7 @@ import com.auth.service.UserService;
 import com.common.dto.user.UserPrincipal;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
@@ -58,6 +60,7 @@ public class AuthController {
             @RequestBody LoginRequestDto requestDto,
             HttpServletResponse response
     ) {
+        log.info(">>> 로그인 요청 들어옴: email={}", requestDto.getEmail());
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(requestDto.getEmail(), requestDto.getPassword())
