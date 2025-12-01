@@ -79,3 +79,8 @@
 |  | S3 | `-` | 정적 파일 저장 |
 | 🔧 **CI/CD** | GitHub Actions | `latest` | CI/CD 자동화 |
 |  | Docker Hub | `-` | 컨테이너 이미지 저장소
+
+
+**Branch Info:**
+- `main` 🟢 : Cloud 환경용
+- `dev01` 🔵 : Local 개발용
