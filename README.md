@@ -12,24 +12,23 @@
 
 <br>
 
-## 2. 시스템 아키텍처
-
-
-[Image of System Architecture Diagram]
-
-> 추후 추가 예정(아키텍처 이미지 부분)
+## 2. 시스템 아키텍처(Cloud)
+<img width="892" height="576" alt="Image" src="https://github.com/user-attachments/assets/352542d9-d8dc-46ad-b698-50afd3cf42a8" />
 
 ### 서비스 구성
 
-| Service | 역할 | 주요 기술 |
-| :--- | :--- | :--- |
-| **API Gateway** | 모든 클라이언트 요청의 단일 진입점. 인증/인가 및 라우팅 수행. | `Spring Cloud Gateway` |
-| **Auth Service (User)** | 회원가입, 로그인 처리 및 JWT 토큰 발급. | `Spring Security`, `JWT` |
-| **Auction Service** | 경매 물품 등록, 조회, 경매 상태(시작/종료) 관리, 낙찰자 선정. | `Spring Boot`, `JPA` |
-| **Bid-Request Service** | 사용자의 입찰 요청을 접수하여 Kafka에 즉시 발행. (API 응답 속도 극대화) | `Spring Boot`, `Kafka Producer` |
-| **Bidding Service** | Kafka의 입찰 메시지를 구독(Consume)하여 실제 입찰 유효성 검사 및 비즈니스 로직 처리. | `Spring Boot`, `Kafka Consumer` |
-| **Notification Service** | `Bid Service`의 처리 결과(성공/실패)를 받아 SSE를 통해 클라이언트에 실시간 전송. | `Spring Boot`, `SSE` |
-| **Analysis Service** | 입찰 메시지를 받고 있다가 경매가 종료되면 그래프를 생성, api endpoint로 그래프 데이터를 얻음. | `Spring Boot`, 
+| Service | 역할 |
+| :--- | :--- |
+| **API Gateway** | 모든 클라이언트 요청의 단일 진입점. 인증/인가 및 라우팅 수행. |
+| **Auth Service** | 회원가입, 로그인 처리 및 JWT 토큰 발급. |
+| **Auction Service** | 경매 물품 등록, 조회, 경매 상태(시작/종료) 관리, 낙찰자 선정. |
+| **Bid-Request Service** | 사용자의 입찰 요청을 접수하여 Kafka에 즉시 발행. (API 응답 속도 극대화) |
+| **Bidding Service** | Kafka의 입찰 메시지를 구독(Consume)하여 실제 입찰 유효성 검사 및 비즈니스 로직 처리. |
+| **Notification Service** | `Bidding Service`의 처리 결과(성공/실패)를 받아 SSE를 통해 클라이언트에 실시간 전송. |
+| **Analysis Service** | 입찰 메시지를 받고 있다가 경매가 종료되면 그래프를 생성, api endpoint로 그래프 데이터를 얻음. |
+| **Bookmark Service** | 사용자의 북마크를 담당하는 서비스 |
+| **Search Service** | Elasticsearch의 역인덱스를 활용해 빠르고 효율적인 검색 성능을 제공 |
+| **Web Bff Service** | 내부에서 API를 호출하여 마이크로 서비스들을 적절히 조합해 반환하는 서비스 |
 
 <br>
 
@@ -44,24 +43,38 @@
 
 ## 4. 기술 스택 (Environment)
 
-### Backend
-| Category | Stack | Version |
-| :--- | :--- | :--- |
-| **Runtime** | Java (JDK) | `[ 21 ]` |
-| **Framework** | Spring Boot | `[ 3.5.5 ]` |
-| | Spring Cloud | `[ 2023.1.1 ]` |
-| | Spring Security | `[ 6.5 ]` |
-| **Database** | `[PostgreSQL]` | `[ 15 ]` |
-| **ORM** | Spring Data JPA | |
-| **Message Broker** | Kafka | `[ 3.9.1 ]` |
-| **Build Tool** | [Gradle] | `[ 3.0.22 ]` |
+### 공통
+| Category | Stack | Version | Description |
+| :--- | :--- | :--- | :--- |
+| 🧩 **Framework** | Spring Boot | `3.5.5` | 백엔드 메인 프레임워크 |
+|  | Spring Cloud | `2025.0.0` | 마이크로서비스 구성, 공동인증 |
+| 🗄️ **Database** | PostgreSQL | `15` | 주 데이터 저장소 |
+| 💻 **Frontend** | Next.js | `15` | UI 구성, SSR, CSR |
+|  | TanStack Query | `5.90.0` | API 캐싱, 동기화 |
+| ⚙️ **Etc** | Gradle | `3.0.22` | 빌드 |
+|  | Kafka | `3.9.1` | 비동기 메시지 큐 |
+|  | QueryDSL | `5.1.0` | 동적 검색 |
+|  | Elasticsearch | `9.2.0` | Inverted Index |
+|  | Consul | `1.15.4` | 서비스 디스커버리 |
+|  | Sse | `3.5.5` | 실시간 통신 |
 
-<br>
+### Local
+| Category | Stack | Version | Description |
+| :--- | :--- | :--- | :--- |
+| 🧩 **ETC** | Nginx | `1.29.1` | K8s 기반 서비스 오케스트레이션 |
+|  | Docker Compose | `2.35.1` | 컨테이너 관리 |
+|  | Consul | `1.15.4` | 서비스 디스커버리 |
+|  | Spring Cloud Loadbalancer | `2025.0.0` | 서비스 로드 밸런서 |
 
-## 5. 시작하기 (Getting Started)
-
-### Prerequisites (사전 준비물)
-
-* Java (JDK) `[ 21 ]`
-* [Gradle]
-* Docker & Docker Compose
+### Cloud
+| Category | Stack | Version | Description |
+| :--- | :--- | :--- | :--- |
+| 🧩 **Infra & Network** | EKS | `1.3.0` | K8s 기반 서비스 오케스트레이션 |
+|  | EC2 | `latest` | 워커노드 |
+|  | ALB | `latest` | 외부 트래픽 라우팅(Load Balancer) |
+|  | Ingress Controller | `latest` | K8s 내부 라우팅 |
+|  | VPC | `-` | 네트워크 구성(Subnet) |
+| 🪣 **Storage** | RDS(PostgreSQL) | `15` | 운영 DB |
+|  | S3 | `-` | 정적 파일 저장 |
+| 🔧 **CI/CD** | GitHub Actions | `latest` | CI/CD 자동화 |
+|  | Docker Hub | `-` | 컨테이너 이미지 저장소
