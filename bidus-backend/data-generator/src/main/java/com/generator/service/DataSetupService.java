@@ -35,10 +35,10 @@ public class DataSetupService implements CommandLineRunner {
     private final String BASE_URL = "http://localhost";
     private final Random random = new Random();
     private final List<String> CATEGORIES = List.of(
-            "컴퓨터공학", "심리학", "언어학", "물리학", "역사학", "마케팅", "금융", "스타트업", "회계", "인사관리",
-            "인공지능", "웹개발", "사이버보안", "데이터사이언스", "클라우드컴퓨팅", "음악", "미술", "사진", "문학",
-            "영화제작", "사회학", "정지학", "철학", "언론", "미디어", "문화인류학", "요리", "운동", "피트니스",
-            "여행", "패션", "정신건강", "자기계발"
+            "시계", "오르골", "지갑", "옛날 동전", "도자기", "빈티지 카메라", "레코드판", "골동품 장식품",
+            "중고 노트북", "중고 스마트폰", "게이밍 기어", "프리미엄 이어폰", "명품 가방", "명품 신발", "패션 액세서리",
+            "중고 자동차 부품", "캠핑 용품", "낚시 용품", "생활 가전", "주방 가전", "피규어", "레고 제품",
+            "책/희귀 서적", "음악 앨범", "악기", "스포츠 용품", "홈 트레이닝 기구", "자전거", "공예품", "그림/포스터"
     );
 
     @Override
@@ -50,13 +50,13 @@ public class DataSetupService implements CommandLineRunner {
     }
 
     private void createAllData() {
-        System.out.println("====== 1. 테스트 유저 생성 시작 ======");
-        createUsers(100); // n명
-        System.out.println("====== 1. 테스트 유저 생성 완료 ======");
-
-        System.out.println("====== 2. 경매 물품 1,000개 생성 시작 (user1~10) ======");
-        createAuctions(1000, 10); // 10,000개를 100명이 나눠서 등록
-        System.out.println("====== 2. 경매 물품 1,0000개 생성 완료 ======");
+//        System.out.println("====== 1. 테스트 유저 생성 시작 ======");
+//        createUsers(100); // n명
+//        System.out.println("====== 1. 테스트 유저 생성 완료 ======");
+//
+//        System.out.println("====== 2. 경매 물품 1,000개 생성 시작 (user1~10) ======");
+//        createAuctions(1000, 10); // 10,000개를 100명이 나눠서 등록
+//        System.out.println("====== 2. 경매 물품 1,000개 생성 완료 ======");
 
         System.out.println("====== 3. 입찰 10,000건 생성 시작 (user101~1000) ======");
         placeBids(10000, 11, 100, 1000); // 100,000건을 user101~1000이 1,000개씩 물품에 입찰
@@ -74,8 +74,8 @@ public class DataSetupService implements CommandLineRunner {
             pw.println("email,password");
 
             for (int i = 1; i <= count; i++) {
-                String email = "user" + i + "@example.com";
-                String username = "user" + i;
+                String email = "user_v1" + i + "@example.com";
+                String username = "user_v1" + i;
                 String password = "1234";
 
                 SignupRequestDto dto = new SignupRequestDto(email, username, password, "USER");
@@ -104,7 +104,7 @@ public class DataSetupService implements CommandLineRunner {
         int auctionsPerSeller = totalAuctions / sellerCount;
 
         for (int i = 1; i <= sellerCount; i++) {
-            String email = "user" + i + "@example.com";
+            String email = "user_v1" + i + "@example.com";
             String password = "1234";
 
             // 1. 판매자 로그인 (쿠키가 자동 저장되는 RestTemplate 획득)
@@ -121,7 +121,7 @@ public class DataSetupService implements CommandLineRunner {
                         List.of(CATEGORIES.get(random.nextInt(CATEGORIES.size()))), // 카테고리 1개 랜덤 선택
                         10000L + (random.nextInt(100) * 100), // 10,000 ~ 19,900원
                         Instant.now().plus(1, ChronoUnit.MINUTES), // n분 뒤 시작
-                        Instant.now().plus(2, ChronoUnit.HOURS)     // n분 뒤 마감
+                        Instant.now().plus(30, ChronoUnit.MINUTES)     // n분 뒤 마감
                 );
 
                 // 3. Multipart/form-data 요청 구성
@@ -149,7 +149,7 @@ public class DataSetupService implements CommandLineRunner {
         int bidsPerUser = totalBids / bidderCount;
 
         for (int i = bidderStartIdx; i <= bidderEndIdx; i++) {
-            String email = "user" + i + "@example.com";
+            String email = "user_v1" + i + "@example.com";
             String password = "1234";
 
             // 1. 입찰자 로그인

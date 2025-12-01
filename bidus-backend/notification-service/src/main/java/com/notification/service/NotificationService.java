@@ -3,6 +3,7 @@ package com.notification.service;
 import com.notification.sse.SseEmitters;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -31,6 +32,7 @@ public class NotificationService {
     }
 
     public void sendPriceUpdateToAll(Long auctionId, long newPrice) {
+        log.info("sendPriceUpdateToAll received: {}", newPrice);
         sseEmitters.getAuctionEmitters(auctionId).forEach(emitter -> {
             sendToClient(emitter, "price-update", Map.of("price", newPrice));
         });
@@ -44,9 +46,10 @@ public class NotificationService {
 
     private void sendToClient(SseEmitter emitter, String eventName, Object data) {
         try {
+            log.info("sendToClient received: {}", data);
             emitter.send(SseEmitter.event()
                     .name(eventName)
-                    .data(data));
+                    .data(data, MediaType.APPLICATION_JSON));
         } catch (IOException e) {
             log.error("SSE error", e);
             emitter.completeWithError(e);

@@ -2,7 +2,7 @@ import { AuctionPage } from "../../types/dto/request/search"
 import { SearchParams } from '../../types/dto/request/search';
 import axiosInstance from '../app/utils/axiosInstance';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const fetchSearchByKeyword = async (params: SearchParams): Promise<AuctionPage> => {
     const query = new URLSearchParams();
@@ -29,7 +29,7 @@ export const fetchSearchByKeyword = async (params: SearchParams): Promise<Auctio
     }
     
     const queryString = query.toString();
-    const API_URL = `${API_BASE_URL}/search/auctions?${queryString}`;
+    const API_URL = `${BASE_URL}/search/auctions?${queryString}`;
 
     try {
         const res = await axiosInstance.get(API_URL);

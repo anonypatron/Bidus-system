@@ -206,7 +206,7 @@ function SalesPage() {
                 </div>
                 
                 <div className="form-group">
-                    <label className="form-label">* 경매 시작 시간(15분 간격)</label>
+                    <label className="form-label">* 경매 시작 시간</label>
                     <DatePicker
                         selected={selectedStartTime}
                         onChange={(date: Date | null) => handleDateChange(date, 'startTime')}
@@ -222,7 +222,7 @@ function SalesPage() {
                 </div>
 
                 <div className="form-group">
-                    <label className="form-label">* 경매 종료 시간(15분 간격)</label>
+                    <label className="form-label">* 경매 종료 시간</label>
                     <DatePicker
                         selected={selectedEndTime}
                         onChange={(date: Date | null) => handleDateChange(date, 'endTime')}

@@ -37,6 +37,7 @@ function AuctionsPage() {
     
     useEffect(() => {
         const eventSource = new EventSource(`/api/notifications/${auctionId}/subscribe`);
+        
         const fetchAuction = async () => {
             try {
                 const res = await axiosInstance.get(`/auctions/${auctionId}`);
@@ -52,6 +53,7 @@ function AuctionsPage() {
 
         // 입찰 성공
         eventSource.addEventListener('price-update', (event) => {
+            // console.log('price update => ' + event.data);
             const priceData = JSON.parse(event.data);
 
             setAuctionDetail(prev => ({
@@ -60,7 +62,7 @@ function AuctionsPage() {
             }));
             setError('');
 
-            toast.success(`${priceData.price}원 입찰을 성공했습니다.`);
+            toast.success(`새로운 입찰 : ${priceData.price}`);
         });
 
         // 입찰 실패

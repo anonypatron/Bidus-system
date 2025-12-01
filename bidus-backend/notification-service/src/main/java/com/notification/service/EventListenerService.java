@@ -16,11 +16,13 @@ public class EventListenerService {
 
     @KafkaListener(topics = "bid-placed-topic", groupId = "notification-group")
     public void handleBidPlaced(BidPlacedEvent event) {
+        log.info("BidPlacedEvent received: {}", event.getPrice());
         notificationService.sendPriceUpdateToAll(event.getAuctionId(), event.getPrice());
     }
 
     @KafkaListener(topics = "bid-failed-topic", groupId = "notification-group")
     public void handleBidFailed(BidFailedEvent event) {
+        log.info("BidFailedEvent received: {}", event.getReason());
         notificationService.sendNotificationToUser(
                 event.getUserId(),
                 event.getAuctionId(),
