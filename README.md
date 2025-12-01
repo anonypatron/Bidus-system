@@ -81,6 +81,19 @@
 |  | Docker Hub | `-` | 컨테이너 이미지 저장소
 
 
+## 5. 부하 테스트(K6)
+<img width="1792" height="935" alt="Image" src="https://github.com/user-attachments/assets/d48df568-d0b0-4871-b754-998bb46063c6" />
+
+- 조건 : 로컬, 최대 5000명의 가상유저가 입찰 시도.
+  - http_req_duration -> 요청을 보내고 응답을 받을 때까지 걸린 총 시간.
+  - http_req_wating -> 서버가 데이터를 처리하느라 걸린 시간.
+  - http_req_connecting -> 네트워크 연결
+  - http_req_failed -> 요청 실패 비율
+  - http_reqs -> 초당 n건의 트랜잭션 처리
+
+- **결과** : 평소에는 0.3초대로 빠르지만 요청이 몰릴 때는 응답 속도가 약 4초까지 지연되는 현상이 관측되었음. 이는 로컬에서의 cpu, 메모리 한계 때문(Docker, 부하 테스트 툴을 하나의 PC에서 실행) 4초까지 지연이 되지만 실패하는 경우는 없었음. 실제 운영환경에서는 Kafka 파티션을 늘리고 스케일 아웃을 하면 4초 지연은 1초 미만으로 단축될거라 예상함.
+
+
 **Branch Info:**
 - `main` 🟢 : Cloud 환경용
 - `dev01` 🔵 : Local 개발용
