@@ -97,7 +97,7 @@
 
 
 ## 5. 부하 테스트(K6)
-<img width="1792" height="935" alt="Image" src="https://github.com/user-attachments/assets/d48df568-d0b0-4871-b754-998bb46063c6" />
+<img width="758" height="406" alt="Image" src="https://github.com/user-attachments/assets/18bd6ecf-44f8-40e6-b5d2-1eb7baa29d4c" />
 
 - 조건 : 로컬, 최대 5000명의 가상유저가 입찰 시도.
   - http_req_duration -> 요청을 보내고 응답을 받을 때까지 걸린 총 시간.
